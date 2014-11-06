@@ -15,6 +15,7 @@ import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import procrastination.mouse.mouse_event;
 
 /**
  *
@@ -47,33 +48,45 @@ public class GamePanel extends JPanel implements Runnable{
     
     /**
      * Takes the game window size as well as the containing JPanel
-     * @param wPort - The width of the draw buffer
-     * @param hPort - The height of the draw buffer
-     * @param owner - The JFrame that this panel is contained within
+     * @param wPort The width of the draw buffer
+     * @param hPort The height of the draw buffer
+     * @param owner The JFrame that this panel is contained within
      */
     GamePanel(int wPort, int hPort, JFrame owner){
         gameWindowSize = new Dimension(wPort, hPort);
         container = owner;
         setBackground(Color.BLACK);
+        
+        keyboard keyboard = new keyboard();
+        mouse mouse = new mouse(this);
     }
     
     /**
-     * Creates a new thread of the game loop logic
+     * This is called at the start of the game loop.
+     * Can be used to initialize things
      */
-    public void startGame(){
-        running = true;
-        gameThread = new Thread(this);
-        gameThread.start();
+    private void gameStart(){
+        keyboard.instance.register_key(KeyEvent.VK_ESCAPE);
     }
+    
     /**
      * This is where all of the update logic of the game will take place
      */
     private void gameUpdate(){
-        
+        //Typical loop to iterate over all mouse input since last frame
+        while(mouse.instance.get_queue_size() > 0){
+            mouse_event me = mouse.instance.next_mouse_event();
+            
+            System.out.println(me.toString());
+        }
+        //Example of keyboard input
+        if(keyboard.instance.is_key_pressed(KeyEvent.VK_ESCAPE)){
+            endGame();
+        }
     }
     /**
      * Called by the game loop. This is where all of our draw code will go
-     * @param g - The graphics object that will be used for drawing
+     * @param g The graphics object that will be used for drawing
      */
     private void gameDraw(Graphics g){
         g.setColor(Color.white);
@@ -83,37 +96,10 @@ public class GamePanel extends JPanel implements Runnable{
     }
     
     /**
-     * Called by the JFrame's KeyAdapter
-     * @param keyCode - the keycode of the key that the event was caused by
-     */
-    public void key_pressed_event(int keyCode) {
-        switch(keyCode){
-            case KeyEvent.VK_ESCAPE:
-                endGame();
-                break;
-        }
-    }
-
-    /**
-     * Called by the JFrame's KeyAdapter
-     * @param keyCode - the keycode of the key that the event was caused by
-     */
-    public void key_released_event(int keyCode) {
-        
-    }
-    
-    /**
-     * This function will end the game
-     */
-    public void endGame(){
-        running = false;
-    }
-    
-    /**
      * Not completely necessary to unload resources in java because its managed
      * However, this function is always called at the end of the game loop
      */
-    public void unload(){
+    public void gameEnd(){
         
     }
     
@@ -135,7 +121,9 @@ public class GamePanel extends JPanel implements Runnable{
         updatesPerSecond = 0;
         drawCycles = 0;
         drawsPerSecond = 0;
-
+        
+        gameStart();
+        
         //next_update - the next time the loop should cycle
         double next_update = (double) System.nanoTime() / 1000000;
         int skipped_frames = 0;
@@ -183,14 +171,21 @@ public class GamePanel extends JPanel implements Runnable{
             }
         }
         //Clean up stuffs
-        unload();
+        gameEnd();
         container.dispose();
         System.out.println("System Exiting");
     }
     
     /**
+     * Gives access to the scale of the draw rectangle for converting mouse coordinates
+     * @return the draw scale
+     */
+    public Rectangle getDrawRectangle(){
+        return drawScale;
+    }
+    /**
      * Calculates the scale from the gameScreen size to the screen size as well as centers
-     * @param d - The dimension of the screen (usually straight from JFrame method getSize())
+     * @param d The dimension of the screen (usually straight from JFrame method getSize())
      */
     private void setWindowSize(Dimension d){
         screenSize = d;
@@ -209,6 +204,15 @@ public class GamePanel extends JPanel implements Runnable{
             drawScale.y = 0;
         }
         setSize(screenSize);
+    }
+    
+    /**
+     * Creates a new thread of the game loop logic
+     */
+    public void startGame(){
+        running = true;
+        gameThread = new Thread(this);
+        gameThread.start();
     }
     
     /**
@@ -257,5 +261,12 @@ public class GamePanel extends JPanel implements Runnable{
         } catch (Exception e) {
             System.err.println(e);
         }
+    }
+    
+    /**
+     * This function will end the game
+     */
+    public void endGame(){
+        running = false;
     }
 }

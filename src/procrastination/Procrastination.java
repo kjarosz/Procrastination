@@ -6,6 +6,10 @@ import java.awt.GraphicsEnvironment;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import javax.swing.JFrame;
@@ -16,6 +20,8 @@ public class Procrastination extends JFrame implements Runnable{
     private static JFrame owner;
     private static WindowListener wl;
     private static KeyListener kl;
+    private static MouseListener ml;
+    private static MouseWheelListener mwl;
     private static GamePanel content;
     
     //The width and height of the draw region in pixels
@@ -84,17 +90,17 @@ public class Procrastination extends JFrame implements Runnable{
         };
         addWindowListener(wl);
         
-        //Allow for keyboard input to be passed from the JFrame to the GamePanel
+        //Allow for keyboard input to be passed from the JFrame to the keyboard class
         kl = new KeyAdapter() {
                 @Override
                 public void keyPressed(KeyEvent e) {
-                    content.key_pressed_event(e.getKeyCode());
+                    keyboard.instance.key_press(e.getKeyCode());
                     e.consume();
                 }
 
                 @Override
                 public void keyReleased(KeyEvent e) {
-                    content.key_released_event(e.getKeyCode());
+                    keyboard.instance.key_release(e.getKeyCode());
                     e.consume();
                 }
 
@@ -103,7 +109,47 @@ public class Procrastination extends JFrame implements Runnable{
                     e.consume();
                 }
             };
-            addKeyListener(kl);
+        addKeyListener(kl);
+        
+        //Allow for mouse input to be passed from the JFrame to the mouse class
+        ml = new MouseListener() {
+                @Override
+                public void mouseClicked(MouseEvent me) {
+                    me.consume();
+                }
+
+                @Override
+                public void mousePressed(MouseEvent me) {
+                    mouse.instance.mouse_press(me.getButton());
+                    me.consume();
+                }
+
+                @Override
+                public void mouseReleased(MouseEvent me) {
+                    mouse.instance.mouse_release(me.getButton());
+                    me.consume();
+                }
+
+                @Override
+                public void mouseEntered(MouseEvent me) {
+                    me.consume();
+                }
+
+                @Override
+                public void mouseExited(MouseEvent me) {
+                    mouse.instance.clear_buttons();
+                    me.consume();
+                }
+            };
+        mwl = new MouseWheelListener() {
+                @Override
+                public void mouseWheelMoved(MouseWheelEvent mwe) {
+                    mouse.instance.wheel_moved(mwe.getPreciseWheelRotation());
+                    mwe.consume();
+                }
+            };
+        addMouseListener(ml);
+        addMouseWheelListener(mwl);
         
         //Add the GamePanel to the window and show it
         add(content);
