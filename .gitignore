@@ -12,3 +12,4 @@ nbactions.xml
 nb-configuration.xml
 build.xml
 manifest.mf
+/bin
