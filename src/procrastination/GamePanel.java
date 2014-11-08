@@ -15,7 +15,10 @@ import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import procrastination.mouse.mouse_event;
+
+import procrastination.input.Keyboard;
+import procrastination.input.Mouse;
+import procrastination.input.Mouse.mouse_event;
 
 /**
  *
@@ -52,13 +55,12 @@ public class GamePanel extends JPanel implements Runnable{
      * @param hPort The height of the draw buffer
      * @param owner The JFrame that this panel is contained within
      */
-    GamePanel(int wPort, int hPort, JFrame owner){
+    public GamePanel(int wPort, int hPort, JFrame owner){
         gameWindowSize = new Dimension(wPort, hPort);
         container = owner;
         setBackground(Color.BLACK);
         
-        keyboard keyboard = new keyboard();
-        mouse mouse = new mouse(this);
+        Mouse mouse = new Mouse(this);
     }
     
     /**
@@ -66,7 +68,7 @@ public class GamePanel extends JPanel implements Runnable{
      * Can be used to initialize things
      */
     private void gameStart(){
-        keyboard.instance.register_key(KeyEvent.VK_ESCAPE);
+        Keyboard.getKeyboard().register_key(KeyEvent.VK_ESCAPE);
     }
     
     /**
@@ -74,13 +76,13 @@ public class GamePanel extends JPanel implements Runnable{
      */
     private void gameUpdate(){
         //Typical loop to iterate over all mouse input since last frame
-        while(mouse.instance.get_queue_size() > 0){
-            mouse_event me = mouse.instance.next_mouse_event();
+        while(Mouse.getMouse().get_queue_size() > 0){
+            mouse_event me = Mouse.getMouse().next_mouse_event();
             
             System.out.println(me.toString());
         }
         //Example of keyboard input
-        if(keyboard.instance.is_key_pressed(KeyEvent.VK_ESCAPE)){
+        if(Keyboard.getKeyboard().is_key_pressed(KeyEvent.VK_ESCAPE)){
             endGame();
         }
     }
