@@ -1,11 +1,8 @@
 package procrastination.input;
 
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-
-import procrastination.GamePanel;
 
 public class Mouse {
     //The different types of events that can occur
@@ -27,58 +24,65 @@ public class Mouse {
     private Point right_start = new Point(0, 0);
     private Point middle_start = new Point(0, 0);
     
+    private Point mouse_position = new Point(0, 0);
+    
     //Stores any mouse events that happen for processing
     private ArrayList<mouse_event> events;
     
-    //Access for calculating real world coordinates of the mouse to game screen coordinates
-    private GamePanel gamePanel;
-    private Rectangle drawRectangle;
-    
-    private Mouse(GamePanel p){
-        gamePanel = p;
+    private Mouse(){
         events = new ArrayList<>();
     }
     
     public static Mouse getMouse() {
         if(sMouse == null)
             sMouse = new Mouse();
+        
+        return sMouse;
     }
     
     /**
      * Called by the mouseListener whenever there is a mouse press
      * @param button the button that was pressed
      */
-    public void mouse_press(int button){
-        if(mouse_in_window()){
-            if(button == LEFT_BUTTON){
-                left_pressed = true;
-                left_start = new Point(get_mouse_x(), get_mouse_y());
-            }else if(button == MIDDLE_BUTTON){
-                middle_pressed = true;
-                middle_start = new Point(get_mouse_x(), get_mouse_y());
-            }else if(button == RIGHT_BUTTON){
-                right_pressed = true;
-                right_start = new Point(get_mouse_x(), get_mouse_y());
-            }
-            events.add(new mouse_event(button, get_mouse_x(), get_mouse_y(), true));
-        }
+    public void mouse_press(MouseEvent event){
+         int button = event.getButton();
+         mouse_position = event.getPoint();
+         if(button == LEFT_BUTTON){
+             left_pressed = true;
+             left_start = new Point(mouse_position.x, mouse_position.y);
+         }else if(button == MIDDLE_BUTTON){
+             middle_pressed = true;
+             middle_start = new Point(mouse_position.x, mouse_position.y);
+         }else if(button == RIGHT_BUTTON){
+             right_pressed = true;
+             right_start = new Point(mouse_position.x, mouse_position.y);
+         }
+         events.add(new mouse_event(button, mouse_position.x, mouse_position.y, true));
     }
     
     /**
      * Called by the mouseListener whenever there is a mouse released
      * @param button the button that was released
      */
-    public void mouse_release(int button){
-        if(mouse_in_window()){
-            if(button == LEFT_BUTTON){
-                left_pressed = false;
-            }else if(button == MIDDLE_BUTTON){
-                middle_pressed = false;
-            }else if(button == RIGHT_BUTTON){
-                right_pressed = false;
-            }
-            events.add(new mouse_event(button, get_mouse_x(), get_mouse_y(), false));
-        }
+    public void mouse_release(MouseEvent event){
+         int button = event.getButton();
+         if(button == LEFT_BUTTON){
+             left_pressed = false;
+         }else if(button == MIDDLE_BUTTON){
+             middle_pressed = false;
+         }else if(button == RIGHT_BUTTON){
+             right_pressed = false;
+         }
+         mouse_position = event.getPoint();
+         events.add(new mouse_event(button, mouse_position.x, mouse_position.y, false));
+    }
+    
+    /**
+     * Called by the mouseMotionListener whenever mouse changes position
+     * @param position position relative to the source panel
+     */
+    public void mouse_move(Point position) {
+       mouse_position = position;
     }
     
     /**
@@ -124,72 +128,6 @@ public class Mouse {
      */
     public void clear_queue(){
         events.clear();
-    }
-    
-    /**
-     * Gets the mouse x position scaled to game screen coordinates
-     * @return mouse x
-     */
-    public int get_mouse_x() {
-        Point mouse_loc = gamePanel.getMousePosition();
-        if(drawRectangle == null){
-            drawRectangle = gamePanel.getDrawRectangle();
-        }
-        if(in_rectangle(drawRectangle.x, drawRectangle.y, drawRectangle.x + drawRectangle.width, drawRectangle.y + drawRectangle.height, mouse_loc.x, mouse_loc.y)){
-            return (int)((((double)mouse_loc.x - (double)drawRectangle.x) / (double)drawRectangle.width) * (double)gamePanel.gameWindowSize.width);
-        }else{
-            return -1;
-        }
-    }
-    
-    /**
-     * Gets the mouse y position scaled to game screen coordinates
-     * @return mouse y
-     */
-    public int get_mouse_y() {
-        Point mouse_loc = gamePanel.getMousePosition();
-        if(drawRectangle == null){
-            drawRectangle = gamePanel.getDrawRectangle();
-        }
-        if(in_rectangle(drawRectangle.x, drawRectangle.y, drawRectangle.x + drawRectangle.width, drawRectangle.y + drawRectangle.height, mouse_loc.x, mouse_loc.y)){
-            return (int)((((double)mouse_loc.y - (double)drawRectangle.y) / (double)drawRectangle.height) * (double)gamePanel.gameWindowSize.width);
-        }else{
-            return -1;
-        }
-    }
-    
-    /**
-     * Checks to see if the mouse is over the game window
-     * @return True if the mouse is within the game window
-     */
-    public boolean mouse_in_window(){
-        return get_mouse_x() != -1 && get_mouse_y() != -1;
-    }
-    
-    /**
-     * Checks to see if the mouse is in the rectangle formed by (x1, y1) and (x2, y2)
-     * @param x1 the x coordinate of the first point
-     * @param y1 the y coordinate of the first point
-     * @param x2 the x coordinate of the second point
-     * @param y2 the y coordinate of the second point
-     * @return True if the mouse is within those four points
-     */
-    public boolean mouse_in_rectangle(int x1, int y1, int x2, int y2) {
-        return in_rectangle(x1, y1, x2, y2, get_mouse_x(), get_mouse_y());
-    }
-    
-    /**
-     * Checks to see if (m1, y1) is in the rectangle formed by (x1, y1) and (x2, y2)
-     * @param x1 the x coordinate of the first point
-     * @param y1 the y coordinate of the first point
-     * @param x2 the x coordinate of the second point
-     * @param y2 the y coordinate of the second point
-     * @param mx the x coordinate of the point that is being checked
-     * @param my the y coordinate of the point that is being checked
-     * @return true if the point is within the rectangle
-     */
-    private boolean in_rectangle(int x1, int y1, int x2, int y2, int mx, int my){
-        return mx > x1 && mx < x2 && my > y1 && my < y2;
     }
     
     /**

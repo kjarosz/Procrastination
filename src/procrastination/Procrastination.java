@@ -7,6 +7,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowAdapter;
@@ -54,7 +55,7 @@ public class Procrastination extends JFrame implements Runnable{
         //Make the window not go away on close so that we can do gracefull closing
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         
-        addListeners();
+        addListeners(content);
         
         //Add the GamePanel to the window and show it
         add(content);
@@ -63,11 +64,12 @@ public class Procrastination extends JFrame implements Runnable{
         content.startGame();
     }
     
-    private void addListeners() {
+    private void addListeners(GamePanel gamePanel) {
         addWindowListener();
         addKeyListener();
-        addMouseListener();
-        addMouseWheelListener();
+        addMouseListener(gamePanel);
+        addMouseMotionListener(gamePanel);
+        addMouseWheelListener(gamePanel);
     }
     
     private void addWindowListener() {
@@ -103,9 +105,9 @@ public class Procrastination extends JFrame implements Runnable{
        });
     }
     
-    private void addMouseListener() {
+    private void addMouseListener(GamePanel gamePanel) {
        	//Allow for mouse input to be passed from the JFrame to the mouse class
-        addMouseListener(new MouseListener() {
+        gamePanel.addMouseListener(new MouseListener() {
 	      @Override
 	      public void mouseClicked(MouseEvent me) {
 	          me.consume();
@@ -113,13 +115,13 @@ public class Procrastination extends JFrame implements Runnable{
 	
 	      @Override
 	      public void mousePressed(MouseEvent me) {
-	          Mouse.getMouse().mouse_press(me.getButton());
+	          Mouse.getMouse().mouse_press(me);
 	          me.consume();
 	      }
 	
 	      @Override
 	      public void mouseReleased(MouseEvent me) {
-	          Mouse.getMouse().mouse_release(me.getButton());
+	          Mouse.getMouse().mouse_release(me);
 	          me.consume();
 	      }
 	
@@ -136,8 +138,24 @@ public class Procrastination extends JFrame implements Runnable{
         });
     }
     
-    private void addMouseWheelListener() {
-        addMouseWheelListener(new MouseWheelListener() {
+    private void addMouseMotionListener(GamePanel gamePanel) {
+       gamePanel.addMouseMotionListener(new MouseMotionListener() {
+         @Override
+         public void mouseDragged(MouseEvent arg0) {
+            Mouse.getMouse().mouse_move(arg0.getPoint());
+         }
+
+         @Override
+         public void mouseMoved(MouseEvent arg0) {
+            // TODO Auto-generated method stub
+            Mouse.getMouse().mouse_move(arg0.getPoint());
+         }
+          
+       });
+    }
+    
+    private void addMouseWheelListener(GamePanel gamePanel) {
+        gamePanel.addMouseWheelListener(new MouseWheelListener() {
             @Override
             public void mouseWheelMoved(MouseWheelEvent mwe) {
                 Mouse.getMouse().wheel_moved(mwe.getPreciseWheelRotation());

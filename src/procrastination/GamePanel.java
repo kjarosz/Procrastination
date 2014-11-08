@@ -59,8 +59,6 @@ public class GamePanel extends JPanel implements Runnable{
         gameWindowSize = new Dimension(wPort, hPort);
         container = owner;
         setBackground(Color.BLACK);
-        
-        Mouse mouse = new Mouse(this);
     }
     
     /**
@@ -165,7 +163,7 @@ public class GamePanel extends JPanel implements Runnable{
                 int sleep = (int) (next_update - time);
                 if (sleep > 0) {
                     try {
-                        gameThread.sleep(sleep);
+                        Thread.sleep(sleep);
                     } catch (InterruptedException ex) {
                         //Ignore
                     }
