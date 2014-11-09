@@ -70,7 +70,7 @@ public class GamePanel extends JPanel implements Runnable{
      * Can be used to initialize things
      */
     private void gameStart(){
-        mLevel = new Level();
+        mLevel = new Level(gameWindowSize.width, gameWindowSize.height);
     }
     
     /**
@@ -80,8 +80,6 @@ public class GamePanel extends JPanel implements Runnable{
         //Typical loop to iterate over all mouse input since last frame
         while(Mouse.getMouse().get_queue_size() > 0){
             mouse_event me = Mouse.getMouse().next_mouse_event();
-            
-            System.out.println(me.toString());
         }
         //Example of keyboard input
         if(KeyManager.isKeyPressed(KeyEvent.VK_ESCAPE)){

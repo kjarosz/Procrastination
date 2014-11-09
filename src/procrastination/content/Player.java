@@ -16,7 +16,7 @@ public class Player {
    private final int UP_KEY = KeyEvent.VK_W;
    private final int DOWN_KEY = KeyEvent.VK_S;
    
-   private final double TERMINAL_VELOCITY = 5.0; // pixels per second
+   private final double TERMINAL_VELOCITY = 100.0; // pixels per second
    private final Point2D.Double LEFT_VELOCITY = new Point2D.Double(-TERMINAL_VELOCITY, 0.0);
    private final Point2D.Double RIGHT_VELOCITY = new Point2D.Double(TERMINAL_VELOCITY, 0.0);
    private final Point2D.Double DOWN_VELOCITY = new Point2D.Double(0.0, TERMINAL_VELOCITY);
@@ -32,8 +32,8 @@ public class Player {
 	private Point2D.Double mVelocity;
 	private Point2D.Double mDirection;
 	
-	public Player() {
-		mPosition = new Point2D.Double(0.0, 0.0);
+	public Player(int levelWidth, int levelHeight) {
+		mPosition = new Point2D.Double(levelWidth/2, levelHeight/2);
 		mVelocity = new Point2D.Double(0.0, 0.0);
 		mDirection = new Point2D.Double(0.0, 0.0);
 		
@@ -93,8 +93,8 @@ public class Player {
 		
 	}
 	
-	public void getPosition() {
-		
+	public Point2D.Double getPosition() {
+		return mPosition;
 	}
 	
 	public void update() {
@@ -127,6 +127,6 @@ public class Player {
 	}
 	
 	public void draw(Graphics g) {
-	   
+	   g.fillRect((int)mPosition.x - 16, (int)mPosition.y - 16, 32, 32);
 	}
 }
