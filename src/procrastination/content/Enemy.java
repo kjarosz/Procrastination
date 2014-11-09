@@ -3,6 +3,7 @@ package procrastination.content;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Double;
 
 public class Enemy {
    private final double TERMINAL_VELOCITY = 90; // pixels / second
@@ -14,6 +15,7 @@ public class Enemy {
    
    public Enemy(Point2D.Double position) {
       mPosition = position;
+      mVelocity = new Point2D.Double();
       
       mLastTime = System.currentTimeMillis();
    }
