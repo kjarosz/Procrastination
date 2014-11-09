@@ -72,16 +72,16 @@ public class MouseManager {
       };
    }
    
-   private void setMousePosition(Point position) {
+   private synchronized void setMousePosition(Point position) {
       mMousePosition.x = position.x;
       mMousePosition.y = position.y;
    }
    
-   public static Point getMousePosition() {
+   public synchronized static Point getMousePosition() {
       return mMousePosition;
    }
    
-   public static boolean isButtonPressed(int button) {
+   public synchronized static boolean isButtonPressed(int button) {
       switch(button) {
       case MouseEvent.BUTTON1:
          return mLeftButtonPressed;
