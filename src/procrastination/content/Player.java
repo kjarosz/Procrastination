@@ -1,6 +1,7 @@
 package procrastination.content;
 
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
@@ -9,6 +10,7 @@ import java.util.LinkedList;
 import procrastination.input.ControlFunction;
 import procrastination.input.KeyManager;
 import procrastination.input.KeyMapping;
+import procrastination.input.MouseManager;
 
 public class Player {
    private final int LEFT_KEY = KeyEvent.VK_A;
@@ -89,8 +91,10 @@ public class Player {
 	   mVelocity.y -= vel.y;
 	}
 	
-	public void setDirection(Point2D.Double mousePosition) {
-		
+	public void setDirection(Point2D.Double direction) {
+		double length = Math.sqrt(direction.x*direction.x + direction.y*direction.y);
+		mDirection.x = direction.x/length;
+		mDirection.y = direction.y/length;
 	}
 	
 	public Point2D.Double getPosition() {
@@ -118,7 +122,8 @@ public class Player {
 	}
 	
 	private void processMouse() {
-	   
+	   Point mousePos = MouseManager.getMousePosition();
+	   setDirection(new Point2D.Double(mousePos.x - mPosition.x, mousePos.y - mPosition.y));
 	}
 	
 	private void move() {
@@ -133,5 +138,7 @@ public class Player {
 	
 	public void draw(Graphics g) {
 	   g.fillRect((int)mPosition.x - 16, (int)mPosition.y - 16, 32, 32);
+	   g.drawLine((int)mPosition.x, (int)mPosition.y, 
+	         (int)(mPosition.x + mDirection.x*64), (int)(mPosition.y + mDirection.y*64));
 	}
 }
