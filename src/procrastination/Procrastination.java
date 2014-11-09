@@ -16,8 +16,8 @@ public class Procrastination extends JFrame implements Runnable{
 	private GamePanel content;
     
     //The width and height of the draw region in pixels
-    private int hPort = 600;
-    private int wPort = 800;
+   private int wPort = 1280;
+    private int hPort = 720;
     
     public static void main(String[] args) {
         new Procrastination();
