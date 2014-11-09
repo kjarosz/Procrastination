@@ -3,8 +3,6 @@ package procrastination;
 import java.awt.Color;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -16,7 +14,7 @@ import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-import procrastination.input.Keyboard;
+import procrastination.input.KeyManager;
 import procrastination.input.Mouse;
 
 public class Procrastination extends JFrame implements Runnable{
@@ -66,7 +64,7 @@ public class Procrastination extends JFrame implements Runnable{
     
     private void addListeners(GamePanel gamePanel) {
         addWindowListener();
-        addKeyListener();
+        addKeyListener(gamePanel);
         addMouseListener(gamePanel);
         addMouseMotionListener(gamePanel);
         addMouseWheelListener(gamePanel);
@@ -83,26 +81,8 @@ public class Procrastination extends JFrame implements Runnable{
        });
     }
     
-    private void addKeyListener() {
-       //Allow for keyboard input to be passed from the JFrame to the keyboard class
-        addKeyListener(new KeyAdapter() {
-           @Override
-           public void keyPressed(KeyEvent e) {
-               Keyboard.getKeyboard().key_press(e.getKeyCode());
-               e.consume();
-           }
-
-           @Override
-           public void keyReleased(KeyEvent e) {
-               Keyboard.getKeyboard().key_release(e.getKeyCode());
-               e.consume();
-           }
-
-           @Override
-           public void keyTyped(KeyEvent e) {
-               e.consume();
-           }
-       });
+    private void addKeyListener(GamePanel gamePanel) {
+       new KeyManager(gamePanel);
     }
     
     private void addMouseListener(GamePanel gamePanel) {

@@ -13,10 +13,12 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import procrastination.input.Keyboard;
+import procrastination.content.Level;
+import procrastination.input.KeyManager;
 import procrastination.input.Mouse;
 import procrastination.input.Mouse.mouse_event;
 
@@ -49,6 +51,8 @@ public class GamePanel extends JPanel implements Runnable{
     private Thread gameThread;
     private boolean running = false;
     
+    private Level mLevel;
+    
     /**
      * Takes the game window size as well as the containing JPanel
      * @param wPort The width of the draw buffer
@@ -66,7 +70,7 @@ public class GamePanel extends JPanel implements Runnable{
      * Can be used to initialize things
      */
     private void gameStart(){
-        Keyboard.getKeyboard().register_key(KeyEvent.VK_ESCAPE);
+        mLevel = new Level();
     }
     
     /**
@@ -80,9 +84,11 @@ public class GamePanel extends JPanel implements Runnable{
             System.out.println(me.toString());
         }
         //Example of keyboard input
-        if(Keyboard.getKeyboard().is_key_pressed(KeyEvent.VK_ESCAPE)){
+        if(KeyManager.isKeyPressed(KeyEvent.VK_ESCAPE)){
             endGame();
         }
+        
+        mLevel.update();
     }
     /**
      * Called by the game loop. This is where all of our draw code will go
@@ -93,6 +99,7 @@ public class GamePanel extends JPanel implements Runnable{
         g.drawString("UpdatesPerSecond: " + updatesPerSecond + "; DrawsPerSecond: " + drawsPerSecond, 10, 10);
         g.setColor(Color.red);
         g.drawRect(0, 0, gameWindowSize.width - 1, gameWindowSize.height - 1);
+        mLevel.draw(g);
     }
     
     /**
