@@ -89,7 +89,7 @@ public class Player {
 	   mVelocity.y -= vel.y;
 	}
 	
-	public void setDirection(Point2D.Double vel) {
+	public void setDirection(Point2D.Double mousePosition) {
 		
 	}
 	
@@ -99,6 +99,7 @@ public class Player {
 	
 	public void update() {
 	   processKeyInputs();
+	   processMouse();
 	   move();
 	}
 	
@@ -114,6 +115,10 @@ public class Player {
             keyMapping.pressProcessed = false;
          }
       }
+	}
+	
+	private void processMouse() {
+	   
 	}
 	
 	private void move() {

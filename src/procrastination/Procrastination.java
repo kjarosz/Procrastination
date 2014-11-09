@@ -3,11 +3,6 @@ package procrastination;
 import java.awt.Color;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -15,7 +10,7 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import procrastination.input.KeyManager;
-import procrastination.input.Mouse;
+import procrastination.input.MouseManager;
 
 public class Procrastination extends JFrame implements Runnable{
 	private GamePanel content;
@@ -64,10 +59,8 @@ public class Procrastination extends JFrame implements Runnable{
     
     private void addListeners(GamePanel gamePanel) {
         addWindowListener();
-        addKeyListener(gamePanel);
-        addMouseListener(gamePanel);
-        addMouseMotionListener(gamePanel);
-        addMouseWheelListener(gamePanel);
+        new KeyManager(gamePanel);
+        new MouseManager(gamePanel);
     }
     
     private void addWindowListener() {
@@ -79,68 +72,5 @@ public class Procrastination extends JFrame implements Runnable{
                content.window_closing();
            }
        });
-    }
-    
-    private void addKeyListener(GamePanel gamePanel) {
-       new KeyManager(gamePanel);
-    }
-    
-    private void addMouseListener(GamePanel gamePanel) {
-       	//Allow for mouse input to be passed from the JFrame to the mouse class
-        gamePanel.addMouseListener(new MouseListener() {
-	      @Override
-	      public void mouseClicked(MouseEvent me) {
-	          me.consume();
-	      }
-	
-	      @Override
-	      public void mousePressed(MouseEvent me) {
-	          Mouse.getMouse().mouse_press(me);
-	          me.consume();
-	      }
-	
-	      @Override
-	      public void mouseReleased(MouseEvent me) {
-	          Mouse.getMouse().mouse_release(me);
-	          me.consume();
-	      }
-	
-	      @Override
-	      public void mouseEntered(MouseEvent me) {
-	          me.consume();
-	      }
-	
-	      @Override
-	      public void mouseExited(MouseEvent me) {
-	          Mouse.getMouse().clear_buttons();
-	          me.consume();
-	      }
-        });
-    }
-    
-    private void addMouseMotionListener(GamePanel gamePanel) {
-       gamePanel.addMouseMotionListener(new MouseMotionListener() {
-         @Override
-         public void mouseDragged(MouseEvent arg0) {
-            Mouse.getMouse().mouse_move(arg0.getPoint());
-         }
-
-         @Override
-         public void mouseMoved(MouseEvent arg0) {
-            // TODO Auto-generated method stub
-            Mouse.getMouse().mouse_move(arg0.getPoint());
-         }
-          
-       });
-    }
-    
-    private void addMouseWheelListener(GamePanel gamePanel) {
-        gamePanel.addMouseWheelListener(new MouseWheelListener() {
-            @Override
-            public void mouseWheelMoved(MouseWheelEvent mwe) {
-                Mouse.getMouse().wheel_moved(mwe.getPreciseWheelRotation());
-                mwe.consume();
-            }
-        });
     }
 }

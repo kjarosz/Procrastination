@@ -19,8 +19,6 @@ import javax.swing.JPanel;
 
 import procrastination.content.Level;
 import procrastination.input.KeyManager;
-import procrastination.input.Mouse;
-import procrastination.input.Mouse.mouse_event;
 
 /**
  *
@@ -77,10 +75,6 @@ public class GamePanel extends JPanel implements Runnable{
      * This is where all of the update logic of the game will take place
      */
     private void gameUpdate(){
-        //Typical loop to iterate over all mouse input since last frame
-        while(Mouse.getMouse().get_queue_size() > 0){
-            mouse_event me = Mouse.getMouse().next_mouse_event();
-        }
         //Example of keyboard input
         if(KeyManager.isKeyPressed(KeyEvent.VK_ESCAPE)){
             endGame();
