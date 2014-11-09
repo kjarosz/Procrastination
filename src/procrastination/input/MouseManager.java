@@ -1,11 +1,12 @@
 package procrastination.input;
 
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
-import javax.swing.JComponent;
+import procrastination.GamePanel;
 
 public class MouseManager {
    private static Point mMousePosition = new Point(0,0);
@@ -13,12 +14,12 @@ public class MouseManager {
    private static boolean mLeftButtonPressed = false;
    private static boolean mRightButtonPressed = false;
    
-   public MouseManager(JComponent component) {
-      component.addMouseListener(constructMouseListener());
-      component.addMouseMotionListener(constructMouseMotionListener());
+   public MouseManager(GamePanel component) {
+      component.addMouseListener(constructMouseListener(component));
+      component.addMouseMotionListener(constructMouseMotionListener(component));
    }
    
-   private MouseListener constructMouseListener() {
+   private MouseListener constructMouseListener(GamePanel component) {
       return new MouseListener() {
          @Override
          public void mouseClicked(MouseEvent arg0) {}
@@ -55,21 +56,33 @@ public class MouseManager {
       };
    }
    
-   private MouseMotionListener constructMouseMotionListener() {
+   private MouseMotionListener constructMouseMotionListener(final GamePanel component) {
       return new MouseMotionListener() {
          @Override
-         public void mouseDragged(MouseEvent arg0) {
-            setMousePosition(arg0.getPoint());
+         public void mouseDragged(MouseEvent arg0) { 
+            setMousePosition(scalePoint(arg0.getPoint(), component));
             arg0.consume();
          }
 
          @Override
          public void mouseMoved(MouseEvent arg0) {
-            setMousePosition(arg0.getPoint());
+            setMousePosition(scalePoint(arg0.getPoint(), component));
             arg0.consume();
          }
          
       };
+   }
+   
+   private Point scalePoint(Point mousePos, GamePanel gamePanel) {
+      Rectangle drawRect = gamePanel.getDrawRectangle();
+      if(drawRect == null) {
+         return mousePos;
+      }
+      
+      Point scaledLocation = new Point();
+      scaledLocation.x = (int)((mousePos.x - drawRect.x)/ (double)drawRect.width * (double)gamePanel.gameWindowSize.width);
+      scaledLocation.y = (int)((mousePos.y - drawRect.y) / (double)drawRect.height * (double)gamePanel.gameWindowSize.height);
+      return scaledLocation;
    }
    
    private synchronized void setMousePosition(Point position) {
