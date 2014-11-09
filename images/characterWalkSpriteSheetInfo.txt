@@ -1,0 +1,3 @@
+FrameWidth: 91;
+FrameHeight: 103;
+Number of Frames: 5;
