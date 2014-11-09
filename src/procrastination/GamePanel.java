@@ -13,9 +13,12 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import procrastination.mouse.mouse_event;
+
+import procrastination.content.Level;
+import procrastination.input.KeyManager;
 
 /**
  *
@@ -46,19 +49,18 @@ public class GamePanel extends JPanel implements Runnable{
     private Thread gameThread;
     private boolean running = false;
     
+    private Level mLevel;
+    
     /**
      * Takes the game window size as well as the containing JPanel
      * @param wPort The width of the draw buffer
      * @param hPort The height of the draw buffer
      * @param owner The JFrame that this panel is contained within
      */
-    GamePanel(int wPort, int hPort, JFrame owner){
+    public GamePanel(int wPort, int hPort, JFrame owner){
         gameWindowSize = new Dimension(wPort, hPort);
         container = owner;
         setBackground(Color.BLACK);
-        
-        keyboard keyboard = new keyboard();
-        mouse mouse = new mouse(this);
     }
     
     /**
@@ -66,23 +68,19 @@ public class GamePanel extends JPanel implements Runnable{
      * Can be used to initialize things
      */
     private void gameStart(){
-        keyboard.instance.register_key(KeyEvent.VK_ESCAPE);
+        mLevel = new Level(gameWindowSize.width, gameWindowSize.height);
     }
     
     /**
      * This is where all of the update logic of the game will take place
      */
     private void gameUpdate(){
-        //Typical loop to iterate over all mouse input since last frame
-        while(mouse.instance.get_queue_size() > 0){
-            mouse_event me = mouse.instance.next_mouse_event();
-            
-            System.out.println(me.toString());
-        }
         //Example of keyboard input
-        if(keyboard.instance.is_key_pressed(KeyEvent.VK_ESCAPE)){
+        if(KeyManager.isKeyPressed(KeyEvent.VK_ESCAPE)){
             endGame();
         }
+        
+        mLevel.update();
     }
     /**
      * Called by the game loop. This is where all of our draw code will go
@@ -93,6 +91,7 @@ public class GamePanel extends JPanel implements Runnable{
         g.drawString("UpdatesPerSecond: " + updatesPerSecond + "; DrawsPerSecond: " + drawsPerSecond, 10, 10);
         g.setColor(Color.red);
         g.drawRect(0, 0, gameWindowSize.width - 1, gameWindowSize.height - 1);
+        mLevel.draw(g);
     }
     
     /**
@@ -163,7 +162,7 @@ public class GamePanel extends JPanel implements Runnable{
                 int sleep = (int) (next_update - time);
                 if (sleep > 0) {
                     try {
-                        gameThread.sleep(sleep);
+                        Thread.sleep(sleep);
                     } catch (InterruptedException ex) {
                         //Ignore
                     }
