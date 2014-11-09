@@ -12,7 +12,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class Enemy {
-   private final Rectangle SPRITES[] = {
+   private static final Rectangle SPRITES[] = {
          new Rectangle(28, 34, 191, 362),
          new Rectangle(213, 12, 377, 362)
    };

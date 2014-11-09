@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
@@ -20,7 +21,7 @@ import procrastination.input.KeyMapping;
 import procrastination.input.MouseManager;
 
 public class Player {
-   private final Rectangle SPRITES[] = {
+   private static final Rectangle SPRITES[] = {
      new Rectangle(17, 14, 107, 112),
      new Rectangle(115, 15, 205, 121),
      new Rectangle(213, 16, 303, 123)
@@ -42,7 +43,11 @@ public class Player {
    
    private LinkedList<KeyMapping> mKeyMappings;
    
+   
    private long mLastTime; // milliseconds
+   
+   private long mFiringCooldown = 500; // milliseconds
+   private long mLastFiredBullet; // milliseconds
    
 	private Point2D.Double mPosition;
 	private Point2D.Double mVelocity;
@@ -152,6 +157,14 @@ public class Player {
 	private void processMouse() {
 	   Point mousePos = MouseManager.getMousePosition();
 	   setDirection(new Point2D.Double(mousePos.x - mPosition.x, mousePos.y - mPosition.y));
+	   
+	   if(MouseManager.isButtonPressed(MouseEvent.BUTTON1)) {
+	      if(System.currentTimeMillis() - mLastFiredBullet > mFiringCooldown) {
+	         mFiringCooldown = System.currentTimeMillis();
+	         
+	         // Fire booleet
+	      }
+	   }
 	}
 	
 	private void move() {
