@@ -1,11 +1,18 @@
 package procrastination.content;
 
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.LinkedList;
+
+import javax.imageio.ImageIO;
 
 import procrastination.input.ControlFunction;
 import procrastination.input.KeyManager;
@@ -13,6 +20,12 @@ import procrastination.input.KeyMapping;
 import procrastination.input.MouseManager;
 
 public class Player {
+   private final Rectangle SPRITES[] = {
+     new Rectangle(17, 14, 107, 112),
+     new Rectangle(115, 15, 205, 121),
+     new Rectangle(213, 16, 303, 123)
+   };
+   
    private final int LEFT_KEY = KeyEvent.VK_A;
    private final int RIGHT_KEY = KeyEvent.VK_D;
    private final int UP_KEY = KeyEvent.VK_W;
@@ -25,6 +38,7 @@ public class Player {
    private final Point2D.Double UP_VELOCITY = new Point2D.Double(0.0, -TERMINAL_VELOCITY);
    
    private BufferedImage mSprites[];
+   private int mCurrentImage;
    
    private LinkedList<KeyMapping> mKeyMappings;
    
@@ -44,9 +58,23 @@ public class Player {
 		loadSpriteSheet();
 		constructKeyMappings();
 	}
-	
+
 	private void loadSpriteSheet() {
-	   
+	   try {
+	      BufferedImage spriteSheet = ImageIO.read(new File("images" + File.separator + "characterwalkspritesheetv1.png"));
+	      mSprites = new BufferedImage[SPRITES.length];
+	      for(int i = 0; i < SPRITES.length; i++) {
+	         mSprites[i] = spriteSheet.getSubimage(
+	               SPRITES[i].x, 
+	               SPRITES[i].y, 
+	               SPRITES[i].width - SPRITES[i].x, 
+	               SPRITES[i].height - SPRITES[i].y);
+	      }
+	      mCurrentImage = 0;
+	   } catch (IOException ex) {
+	      System.out.println("Could not read sprite sheet.");
+	      throw new RuntimeException("Main character sprite sheet could not be loaded.");
+	   }
 	}
 	
 	private void constructKeyMappings() {
@@ -137,8 +165,22 @@ public class Player {
 	}
 	
 	public void draw(Graphics g) {
-	   g.fillRect((int)mPosition.x - 16, (int)mPosition.y - 16, 32, 32);
-	   g.drawLine((int)mPosition.x, (int)mPosition.y, 
-	         (int)(mPosition.x + mDirection.x*64), (int)(mPosition.y + mDirection.y*64));
+	   BufferedImage image = mSprites[mCurrentImage];
+	   
+	   Graphics2D g2 = (Graphics2D)g;
+	   AffineTransform oldTransform = g2.getTransform();
+	   g2.translate(mPosition.x, mPosition.y);
+	   if(mDirection.x < 0) {
+         g2.rotate(Math.atan(mDirection.y / mDirection.x) - 3.14/2);
+	   } else {
+         g2.rotate(Math.atan(mDirection.y / mDirection.x) + 3.14/2);
+	   }
+	   g2.drawImage(image, 
+	         -image.getWidth()/2, 
+	         -image.getHeight()/2,
+	         image.getWidth(),
+	         image.getHeight(),
+	         null);
+	   g2.setTransform(oldTransform);
 	}
 }
