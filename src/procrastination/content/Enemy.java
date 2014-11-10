@@ -10,13 +10,18 @@ import java.io.File;
 public class Enemy extends Entity {
    private static final Rectangle SPRITES[] = {
          new Rectangle(28, 34, 191, 362),
-         new Rectangle(213, 12, 377, 362)
+         new Rectangle(213, 12, 377, 362),
+         new Rectangle(421, 16, 568, 362),
+         new Rectangle(607, 36, 750, 363),
+         new Rectangle(796, 34, 960, 362)
    };
    
    private final double TERMINAL_VELOCITY = 90; // pixels / second
    
    private BufferedImage mSprites[];
    private int mCurrentImage;
+   private long mLastImageSwitch; // milliseconds
+   private long mFrameTime; // milliseconds
    
    public Enemy(Point2D.Double position) {
       setPosition(position);
@@ -26,6 +31,8 @@ public class Enemy extends Entity {
       
       loadSprites();
       setCurrentImage(mSprites[mCurrentImage]);
+      mLastImageSwitch = System.currentTimeMillis();
+      mFrameTime = 100;
    }
    
    private void loadSprites() {
@@ -41,6 +48,20 @@ public class Enemy extends Entity {
       setDirection(direction);
       
       move(TERMINAL_VELOCITY);
+      
+      animate();
+   }
+   
+   private void animate() {
+       long deltaTime = System.currentTimeMillis() - mLastImageSwitch;
+       if(deltaTime > mFrameTime) {
+           mLastImageSwitch += deltaTime;
+           mCurrentImage++;
+           if(mCurrentImage >= mSprites.length) {
+               mCurrentImage = 0;
+           }
+           setCurrentImage(mSprites[mCurrentImage]);
+       }
    }
    
    public void draw(Graphics g) {
