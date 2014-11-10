@@ -27,6 +27,10 @@ public class Bullet extends Entity {
    
    public void update(Level level) {
       move(TERMINAL_VELOCITY);
+      
+      if(!level.getLevelSize().contains(mPosition)) {
+         level.deleteEntity(this);
+      }
    }
    
    public void draw(Graphics g) {
