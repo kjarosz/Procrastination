@@ -13,7 +13,7 @@ public class Bullet extends Entity {
          new Rectangle(177, 2, 297, 188)
    };
    
-   private static final double TERMINAL_VELOCITY = 150; // pixels / second
+   private static final double TERMINAL_VELOCITY = 250; // pixels / second
    
    private BufferedImage mSprites[];
    private int mCurrentImage;
