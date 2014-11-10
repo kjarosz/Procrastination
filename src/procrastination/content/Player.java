@@ -1,26 +1,21 @@
 package procrastination.content;
 
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
-import java.awt.geom.AffineTransform;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.LinkedList;
-
-import javax.imageio.ImageIO;
 
 import procrastination.input.ControlFunction;
 import procrastination.input.KeyManager;
 import procrastination.input.KeyMapping;
 import procrastination.input.MouseManager;
 
-public class Player {
-   private final Rectangle SPRITES[] = {
+public class Player extends Entity {
+   private static final Rectangle SPRITES[] = {
      new Rectangle(17, 14, 107, 112),
      new Rectangle(115, 15, 205, 121),
      new Rectangle(213, 16, 303, 123)
@@ -42,39 +37,24 @@ public class Player {
    
    private LinkedList<KeyMapping> mKeyMappings;
    
-   private long mLastTime; // milliseconds
+   private long mFiringCooldown = 500; // milliseconds
+   private long mLastFiredBullet; // milliseconds
    
-	private Point2D.Double mPosition;
 	private Point2D.Double mVelocity;
-	private Point2D.Double mDirection;
 	
 	public Player(int levelWidth, int levelHeight) {
-		mPosition = new Point2D.Double(levelWidth/2, levelHeight/2);
+	   setPosition(new Point2D.Double(levelWidth/2, levelHeight/2));
 		mVelocity = new Point2D.Double(0.0, 0.0);
-		mDirection = new Point2D.Double(0.0, 0.0);
 		
-		mLastTime = System.currentTimeMillis();
+		loadSprites();
 		
-		loadSpriteSheet();
 		constructKeyMappings();
 	}
 
-	private void loadSpriteSheet() {
-	   try {
-	      BufferedImage spriteSheet = ImageIO.read(new File("images" + File.separator + "characterwalkspritesheetv1.png"));
-	      mSprites = new BufferedImage[SPRITES.length];
-	      for(int i = 0; i < SPRITES.length; i++) {
-	         mSprites[i] = spriteSheet.getSubimage(
-	               SPRITES[i].x, 
-	               SPRITES[i].y, 
-	               SPRITES[i].width - SPRITES[i].x, 
-	               SPRITES[i].height - SPRITES[i].y);
-	      }
-	      mCurrentImage = 0;
-	   } catch (IOException ex) {
-	      System.out.println("Could not read sprite sheet.");
-	      throw new RuntimeException("Main character sprite sheet could not be loaded.");
-	   }
+	private void loadSprites() {
+	   mSprites = loadSprites(new File("images" + File.separator + "characterwalkspritesheetv1.png"), SPRITES);
+	   mCurrentImage = 0;
+	   setCurrentImage(mSprites[mCurrentImage]);
 	}
 	
 	private void constructKeyMappings() {
@@ -129,10 +109,10 @@ public class Player {
 		return mPosition;
 	}
 	
-	public void update() {
+	public void update(Level level) {
 	   processKeyInputs();
-	   processMouse();
-	   move();
+	   processMouse(level);
+	   move(mVelocity);
 	}
 	
 	private void processKeyInputs() {
@@ -149,38 +129,16 @@ public class Player {
       }
 	}
 	
-	private void processMouse() {
+	private void processMouse(Level level) {
 	   Point mousePos = MouseManager.getMousePosition();
 	   setDirection(new Point2D.Double(mousePos.x - mPosition.x, mousePos.y - mPosition.y));
-	}
-	
-	private void move() {
-	   long deltaTime = System.currentTimeMillis() - mLastTime;
-	   mLastTime += deltaTime;
 	   
-	   double deltaTimeSeconds = deltaTime / 1000.0;
-	   
-	   mPosition.x += mVelocity.x * deltaTimeSeconds;
-	   mPosition.y += mVelocity.y * deltaTimeSeconds;
-	}
-	
-	public void draw(Graphics g) {
-	   BufferedImage image = mSprites[mCurrentImage];
-	   
-	   Graphics2D g2 = (Graphics2D)g;
-	   AffineTransform oldTransform = g2.getTransform();
-	   g2.translate(mPosition.x, mPosition.y);
-	   if(mDirection.x < 0) {
-         g2.rotate(Math.atan(mDirection.y / mDirection.x) - 3.14/2);
-	   } else {
-         g2.rotate(Math.atan(mDirection.y / mDirection.x) + 3.14/2);
+	   if(MouseManager.isButtonPressed(MouseEvent.BUTTON1)) {
+	      if(System.currentTimeMillis() - mLastFiredBullet > mFiringCooldown) {
+	         mLastFiredBullet = System.currentTimeMillis();
+	         
+	         level.spawnBullet(mPosition, mDirection);
+	      }
 	   }
-	   g2.drawImage(image, 
-	         -image.getWidth()/2, 
-	         -image.getHeight()/2,
-	         image.getWidth(),
-	         image.getHeight(),
-	         null);
-	   g2.setTransform(oldTransform);
 	}
 }
