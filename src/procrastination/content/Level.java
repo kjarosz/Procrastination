@@ -90,27 +90,19 @@ public class Level {
             bullet.update(this);
         }
         //Collisions
-        int e = 0;
         for(Enemy enemy : mEnemies){
             //Check for collisions with bullets
-            System.out.println("Enemy " + e);
-            int b = 0;
             for(Bullet bullet : mBullets){
-                System.out.println("Bullet" + b);
                 if(bullet.intersectsBBox(enemy.getBBox())){
-                    //Collision
-                    System.out.println("Collision");
-                    deleteEntity(bullet);
-                    deleteEntity(enemy);
+                    enemy.collision(bullet.getType(), this);
+                    bullet.collision(enemy.getType(), this);
                 }
-                b++;
             }
             //Check for collisions with player
             if(mPlayer.intersectsBBox(enemy.getBBox())){
-                //Collision
-                deleteEntity(enemy);
+                enemy.collision(mPlayer.getType(), this);
+                mPlayer.collision(enemy.getType(), this);
             }
-            e++;
         }
         //Remove dead objects
         if (!mRemovedEntities.isEmpty()) {

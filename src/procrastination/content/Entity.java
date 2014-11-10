@@ -15,8 +15,7 @@ import javax.imageio.ImageIO;
 
 public abstract class Entity {
 
-    public enum objectTypes {
-
+    public static enum objectTypes {
         PLAYER, ENEMY, BULLET
     };
     private objectTypes type;
@@ -128,6 +127,8 @@ public abstract class Entity {
         return false;
     }
 
+    public abstract void collision(objectTypes other, Level level);
+    
     public void drawBBox(Graphics g, Color c) {
         Color oldColor = g.getColor();
         g.setColor(c);

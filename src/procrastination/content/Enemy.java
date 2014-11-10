@@ -21,6 +21,7 @@ public class Enemy extends Entity {
    public Enemy(Point2D.Double position) {
       setPosition(position);
       setBBox(81, 162);
+      setType(objectTypes.ENEMY);
       mLastTime = System.currentTimeMillis();
       
       loadSprites();
@@ -46,4 +47,16 @@ public class Enemy extends Entity {
       draw(g, -0.5);
       drawBBox(g, Color.MAGENTA);
    }
+
+    @Override
+    public void collision(objectTypes other, Level level) {
+        switch(other){
+            case BULLET:
+                level.deleteEntity(this);
+                break;
+            case PLAYER:
+                level.deleteEntity(this);
+                break;
+        }
+    }
 }

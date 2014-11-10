@@ -47,6 +47,7 @@ public class Player extends Entity {
     public Player(int levelWidth, int levelHeight) {
         setPosition(new Point2D.Double(levelWidth / 2, levelHeight / 2));
         setBBox(90, 98);
+        setType(objectTypes.PLAYER);
         mVelocity = new Point2D.Double(0.0, 0.0);
 
         loadSprites();
@@ -138,5 +139,14 @@ public class Player extends Entity {
     public void draw(Graphics g){
         draw(g, 1.0);
         drawBBox(g, Color.MAGENTA);
+    }
+
+    @Override
+    public void collision(objectTypes other, Level level) {
+        switch(other){
+            case ENEMY:
+                //Ignore for now
+                break;
+        }
     }
 }

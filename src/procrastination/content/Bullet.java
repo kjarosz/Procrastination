@@ -20,7 +20,7 @@ public class Bullet extends Entity {
    public Bullet(Point2D.Double position, Point2D.Double direction) {
       setPosition(position);
       setDirection(direction);
-      
+      setType(objectTypes.BULLET);
       setBBox(30, 45);
       
       mSprites = loadSprites(new File("images" + File.separator + "shot animation.png"), SPRITES);
@@ -40,4 +40,13 @@ public class Bullet extends Entity {
       draw(g, 0.25);
       drawBBox(g, Color.MAGENTA);
    }
+
+    @Override
+    public void collision(objectTypes other, Level level) {
+        switch (other){
+            case ENEMY:
+                level.deleteEntity(this);
+                break;
+        }
+    }
 }
