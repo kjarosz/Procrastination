@@ -1,6 +1,7 @@
 # Ignore Eclipse Files
 .project
 .classpath
+.settings/
 bin/*
 # Ignore Netbeans Files
 nbproject/*
