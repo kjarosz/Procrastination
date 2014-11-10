@@ -1,12 +1,14 @@
 package procrastination.content;
 
 import java.awt.Graphics;
-import java.awt.Polygon;
 import java.awt.Rectangle;
-import java.awt.Shape;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.LinkedList;
+
+import javax.imageio.ImageIO;
 
 public class Level {
 
@@ -17,6 +19,8 @@ public class Level {
     private LinkedList<Bullet> mBullets;
 
     private LinkedList<Entity> mRemovedEntities;
+    
+    private BufferedImage mBackground;
 
     private long mEnemySpawnTime; // milliseconds
     private long mLastEnemySpawn; // milliseconds
@@ -29,6 +33,17 @@ public class Level {
         mRemovedEntities = new LinkedList<>();
         mEnemySpawnTime = 5000;
         mLastEnemySpawn = System.currentTimeMillis() - mEnemySpawnTime;
+        
+        loadLevelBackground();
+    }
+    
+    private void loadLevelBackground() {
+        try {
+            mBackground = ImageIO.read(new File("images" + File.separator + "terrain.jpg"));
+        } catch(IOException ex) {
+            System.out.println("Level background failed to load.");
+            mBackground = null;
+        }
     }
 
     public Rectangle getLevelSize() {
@@ -122,6 +137,10 @@ public class Level {
     }
 
     public void draw(Graphics g) {
+        if(mBackground != null) {
+            g.drawImage(mBackground, 0, 0, mLevelSize.width, mLevelSize.height, null);
+        }
+        
         mPlayer.draw(g);
 
         for (Enemy enemy : mEnemies) {
