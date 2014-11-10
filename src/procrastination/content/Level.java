@@ -10,6 +10,8 @@ public class Level {
    
    private Player mPlayer;
    private LinkedList<Enemy> mEnemies;
+   private LinkedList<Bullet> mBullets;
+      
    
    private long mEnemySpawnTime; // milliseconds
    private long mLastEnemySpawn; // milliseconds
@@ -20,6 +22,7 @@ public class Level {
 		loadLevel();
       mPlayer = new Player(mLevelSize.width, mLevelSize.height);
       mEnemies = new LinkedList<>();
+      mBullets = new LinkedList<>();
       mEnemySpawnTime = 5000;
       mLastEnemySpawn = System.currentTimeMillis() - mEnemySpawnTime;
 	}
@@ -28,13 +31,26 @@ public class Level {
 		// Any obstacle types or level settings loaded in here
 	}
 	
+	public Player getPlayer() {
+	   return mPlayer;
+	}
+	
+	public void spawnBullet(Point2D.Double position, Point2D.Double direction) {
+	   Bullet bullet = new Bullet(position, direction);
+	   mBullets.add(bullet);
+	}
+	
 	public void update() {
-	   mPlayer.update();
+	   mPlayer.update(this);
 	   
 	   spawnNewEnemies();
 	   
 	   for(Enemy enemy: mEnemies) {
-	      enemy.update(mPlayer);
+	      enemy.update(this);
+	   }
+	   
+	   for(Bullet bullet: mBullets) {
+	      bullet.update(this);
 	   }
 	}
 	
@@ -71,7 +87,14 @@ public class Level {
 	public void draw(Graphics g) {
 	   mPlayer.draw(g);
 	   
-	   for(Enemy enemy: mEnemies)
+	   for(Enemy enemy: mEnemies) {
 	      enemy.draw(g);
+	   }
+	   
+	   for(Bullet bullet: mBullets) {
+	      bullet.draw(g);
+	   }
 	}
+	
+	
 }
