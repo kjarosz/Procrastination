@@ -31,7 +31,7 @@ public class Level {
         mEnemies = new LinkedList<>();
         mBullets = new LinkedList<>();
         mRemovedEntities = new LinkedList<>();
-        mEnemySpawnTime = 5000;
+        mEnemySpawnTime = 700;
         mLastEnemySpawn = System.currentTimeMillis() - mEnemySpawnTime;
         
         loadLevelBackground();
