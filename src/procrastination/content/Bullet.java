@@ -9,13 +9,16 @@ import java.awt.Color;
 
 public class Bullet extends Entity {
    private static final Rectangle SPRITES[] = {
-         new Rectangle(0, 0, 120, 180)
+         new Rectangle(0, 0, 120, 180),
+         new Rectangle(177, 2, 297, 188)
    };
    
    private static final double TERMINAL_VELOCITY = 150; // pixels / second
    
    private BufferedImage mSprites[];
    private int mCurrentImage;
+   private long mLastImageSwitch; // milliseconds
+   private long mFrameTime; // milliseconds
    
    public Bullet(Point2D.Double position, Point2D.Double direction) {
       setPosition(position);
@@ -25,6 +28,8 @@ public class Bullet extends Entity {
       
       mSprites = loadSprites(new File("images" + File.separator + "shot animation.png"), SPRITES);
       mCurrentImage = 0;
+      mLastImageSwitch = System.currentTimeMillis();
+      mFrameTime = 100;
       setCurrentImage(mSprites[mCurrentImage]);
    }
    
@@ -34,6 +39,21 @@ public class Bullet extends Entity {
       if(!level.getLevelSize().contains(mPosition)) {
          level.deleteEntity(this);
       }
+      
+      animate();
+   }
+   
+   private void animate() {
+       long deltaTime = System.currentTimeMillis() - mLastImageSwitch;
+       if(deltaTime > mFrameTime) {
+           mLastImageSwitch += deltaTime;
+           mCurrentImage++;
+           if(mCurrentImage >= mSprites.length) {
+               mCurrentImage = 0;
+           }
+           setCurrentImage(mSprites[mCurrentImage]);
+       }
+       
    }
    
    public void draw(Graphics g) {
