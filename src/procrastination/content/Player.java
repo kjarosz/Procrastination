@@ -43,7 +43,9 @@ public class Player extends Entity {
     private long mLastFiredBullet; // milliseconds
 
     private Point2D.Double mVelocity;
-
+    
+    private int mapPadding = 55;
+    
     public Player(int levelWidth, int levelHeight) {
         setPosition(new Point2D.Double(levelWidth / 2, levelHeight / 2));
         setBBox(90, 98);
@@ -105,10 +107,29 @@ public class Player extends Entity {
 
     public void update(Level level) {
         processKeyInputs();
+        Rectangle levelSize = level.getLevelSize();
         processMouse(level);
         move(mVelocity);
+        
+        level.updateOffset();
+        
+        if(mPosition.x - mapPadding < 0){
+            mPosition.x = mapPadding;
+        }else if(mPosition.x > levelSize.width - mapPadding){
+            mPosition.x = levelSize.width - mapPadding;
+        }
+        
+        if(mPosition.y - mapPadding < 0){
+            mPosition.y = mapPadding;
+        }else if(mPosition.y > levelSize.height - mapPadding){
+            mPosition.y = levelSize.height - mapPadding;
+        }
     }
-
+    
+    public int getMapPadding(){
+        return mapPadding;
+    }
+    
     private void processKeyInputs() {
         for (KeyMapping keyMapping : mKeyMappings) {
             if (KeyManager.isKeyPressed(keyMapping.keyCode) && !keyMapping.pressProcessed) {
@@ -125,7 +146,8 @@ public class Player extends Entity {
 
     private void processMouse(Level level) {
         Point mousePos = MouseManager.getMousePosition();
-        setDirection(new Point2D.Double(mousePos.x - mPosition.x, mousePos.y - mPosition.y));
+        Point mapOffset = level.getOffset();
+        setDirection(new Point2D.Double(mousePos.x - mPosition.x + mapOffset.x, mousePos.y - mPosition.y + mapOffset.y));
 
         if (MouseManager.isButtonPressed(MouseEvent.BUTTON1)) {
             if (System.currentTimeMillis() - mLastFiredBullet > mFiringCooldown) {
@@ -136,9 +158,9 @@ public class Player extends Entity {
         }
     }
     
-    public void draw(Graphics g){
-        draw(g, 1.0);
-        drawBBox(g, Color.MAGENTA);
+    public void draw(Graphics g, int xOffset, int yOffset){
+        draw(g, 1.0, xOffset, yOffset);
+        drawBBox(g, Color.MAGENTA, xOffset, yOffset);
     }
 
     @Override

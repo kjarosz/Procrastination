@@ -129,10 +129,12 @@ public abstract class Entity {
 
     public abstract void collision(objectTypes other, Level level);
     
-    public void drawBBox(Graphics g, Color c) {
+    public void drawBBox(Graphics g, Color c, int xOffset, int yOffset) {
         Color oldColor = g.getColor();
         g.setColor(c);
+        bBox.translate(-xOffset, -yOffset);
         g.drawPolygon(bBox);
+        bBox.translate(xOffset, yOffset);
         g.setColor(oldColor);
     }
 
@@ -184,14 +186,14 @@ public abstract class Entity {
         bBox.invalidate();
     }
 
-    public void draw(Graphics g) {
-        draw(g, 1.0);
+    public void draw(Graphics g, int xOffset, int yOffset) {
+        draw(g, 1.0, xOffset, yOffset);
     }
 
-    protected void draw(Graphics g, double scale) {
+    protected void draw(Graphics g, double scale, int xOffset, int yOffset) {
         Graphics2D g2 = (Graphics2D) g;
         AffineTransform oldTransform = g2.getTransform();
-        g2.translate(mPosition.x, mPosition.y);
+        g2.translate(mPosition.x - xOffset, mPosition.y - yOffset);
         if (mDirection.x < 0) {
             g2.rotate(Math.atan(mDirection.y / mDirection.x) - 3.14 / 2);
         } else {

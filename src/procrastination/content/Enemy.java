@@ -64,9 +64,9 @@ public class Enemy extends Entity {
        }
    }
    
-   public void draw(Graphics g) {
-      draw(g, -0.5);
-      drawBBox(g, Color.MAGENTA);
+   public void draw(Graphics g, int xOffset, int yOffset) {
+      draw(g, -0.5, xOffset, yOffset);
+      drawBBox(g, Color.MAGENTA, xOffset, yOffset);
    }
 
     @Override

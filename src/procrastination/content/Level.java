@@ -1,13 +1,13 @@
 package procrastination.content;
 
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
-
 import javax.imageio.ImageIO;
 
 public class Level {
@@ -25,16 +25,22 @@ public class Level {
     private long mEnemySpawnTime; // milliseconds
     private long mLastEnemySpawn; // milliseconds
     
+    private int drawWidth, drawHeight;
+    
+    private int mapXOffset = 0;
+    private int mapYOffset = 0;
+    
     public Level(int width, int height) {
-        mLevelSize = new Rectangle(0, 0, width, height);
+        drawWidth = width;
+        drawHeight = height;
+        loadLevelBackground();
+        
         mPlayer = new Player(mLevelSize.width, mLevelSize.height);
         mEnemies = new LinkedList<>();
         mBullets = new LinkedList<>();
         mRemovedEntities = new LinkedList<>();
         mEnemySpawnTime = 700;
         mLastEnemySpawn = System.currentTimeMillis() - mEnemySpawnTime;
-        
-        loadLevelBackground();
     }
     
     private void loadLevelBackground() {
@@ -44,12 +50,23 @@ public class Level {
             System.out.println("Level background failed to load.");
             mBackground = null;
         }
+        if(mBackground != null){
+            mLevelSize = new Rectangle(0, 0, mBackground.getWidth(), mBackground.getHeight());
+            mapXOffset = (mBackground.getWidth() - drawWidth) / 2;
+            mapYOffset = (mBackground.getHeight() - drawHeight) / 2;
+        }else{
+            mLevelSize = new Rectangle(0, 0, drawWidth, drawHeight);
+        }
     }
 
     public Rectangle getLevelSize() {
         return mLevelSize;
     }
-
+    
+    public Point getOffset(){
+        return new Point(mapXOffset, mapYOffset);
+    }
+    
     public Player getPlayer() {
         return mPlayer;
     }
@@ -96,7 +113,7 @@ public class Level {
     public void update() {
         //Update Objects
         mPlayer.update(this);
-
+        
         spawnNewEnemies();
         for (Enemy enemy : mEnemies) {
             enemy.update(this);
@@ -119,12 +136,27 @@ public class Level {
                 mPlayer.collision(enemy.getType(), this);
             }
         }
+        
         //Remove dead objects
         if (!mRemovedEntities.isEmpty()) {
             removeEntities();
         }
     }
-
+    
+    public void updateOffset(){
+        if(mPlayer.getPosition().x - mPlayer.getMapPadding() < mapXOffset){
+            mapXOffset = Math.max(mapXOffset - 4, 0);
+        }else if(mPlayer.getPosition().x + mPlayer.getMapPadding() > mapXOffset + drawWidth){
+            mapXOffset = Math.min(mapXOffset + 4, mLevelSize.width  - drawWidth);
+        }
+        
+        if(mPlayer.getPosition().y - mPlayer.getMapPadding() < mapYOffset){
+            mapYOffset = Math.max(mapYOffset - 4, 0);
+        }else if(mPlayer.getPosition().y + mPlayer.getMapPadding() > mapYOffset + drawHeight){
+            mapYOffset = Math.min(mapYOffset + 4, mLevelSize.height - drawHeight);
+        }
+    }
+    
     private void removeEntities() {
         for (Entity entity : mRemovedEntities) {
             if (entity instanceof Bullet) {
@@ -138,17 +170,17 @@ public class Level {
 
     public void draw(Graphics g) {
         if(mBackground != null) {
-            g.drawImage(mBackground, 0, 0, mLevelSize.width, mLevelSize.height, null);
+            g.drawImage(mBackground, -mapXOffset, -mapYOffset, null);
         }
         
-        mPlayer.draw(g);
+        mPlayer.draw(g, mapXOffset, mapYOffset);
 
         for (Enemy enemy : mEnemies) {
-            enemy.draw(g);
+            enemy.draw(g, mapXOffset, mapYOffset);
         }
 
         for (Bullet bullet : mBullets) {
-            bullet.draw(g);
+            bullet.draw(g, mapXOffset, mapYOffset);
         }
     }
 
