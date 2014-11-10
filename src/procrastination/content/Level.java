@@ -144,17 +144,8 @@ public class Level {
     }
     
     public void updateOffset(){
-        if(mPlayer.getPosition().x - mPlayer.getMapPadding() < mapXOffset){
-            mapXOffset = Math.max(mapXOffset - 4, 0);
-        }else if(mPlayer.getPosition().x + mPlayer.getMapPadding() > mapXOffset + drawWidth){
-            mapXOffset = Math.min(mapXOffset + 4, mLevelSize.width  - drawWidth);
-        }
-        
-        if(mPlayer.getPosition().y - mPlayer.getMapPadding() < mapYOffset){
-            mapYOffset = Math.max(mapYOffset - 4, 0);
-        }else if(mPlayer.getPosition().y + mPlayer.getMapPadding() > mapYOffset + drawHeight){
-            mapYOffset = Math.min(mapYOffset + 4, mLevelSize.height - drawHeight);
-        }
+        mapXOffset = Math.min(Math.max((int)(mPlayer.getPosition().x - drawWidth / 2), 0), mLevelSize.width - drawWidth);
+        mapYOffset = Math.min(Math.max((int)(mPlayer.getPosition().y - drawHeight / 2), 0), mLevelSize.height - drawHeight);
     }
     
     private void removeEntities() {

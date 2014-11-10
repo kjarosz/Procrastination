@@ -160,7 +160,7 @@ public class Player extends Entity {
     
     public void draw(Graphics g, int xOffset, int yOffset){
         draw(g, 1.0, xOffset, yOffset);
-        drawBBox(g, Color.MAGENTA, xOffset, yOffset);
+        //drawBBox(g, Color.MAGENTA, xOffset, yOffset);
     }
 
     @Override
