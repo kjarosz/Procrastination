@@ -5,17 +5,16 @@ import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.awt.Color;
 
 public class Bullet extends Entity {
    private static final Rectangle SPRITES[] = {
          new Rectangle(0, 0, 120, 180),
          new Rectangle(177, 2, 297, 188)
    };
+   private static BufferedImage mSprites[];
    
    private static final double TERMINAL_VELOCITY = 250; // pixels / second
    
-   private BufferedImage mSprites[];
    private int mCurrentImage;
    private long mLastImageSwitch; // milliseconds
    private long mFrameTime; // milliseconds
@@ -26,7 +25,9 @@ public class Bullet extends Entity {
       setType(objectTypes.BULLET);
       setBBox(30, 45);
       
-      mSprites = loadSprites(new File("images" + File.separator + "shot animation.png"), SPRITES);
+      if(mSprites == null){
+        mSprites = loadSprites(new File("images" + File.separator + "shot animation.png"), SPRITES);
+      }
       mCurrentImage = 0;
       mLastImageSwitch = System.currentTimeMillis();
       mFrameTime = 100;
@@ -65,6 +66,7 @@ public class Bullet extends Entity {
     public void collision(objectTypes other, Level level) {
         switch (other){
             case ENEMY:
+                level.addEntity((new BulletExplosion(getPosition())));
                 level.deleteEntity(this);
                 break;
         }

@@ -16,9 +16,10 @@ public class Enemy extends Entity {
          new Rectangle(796, 34, 960, 362)
    };
    
+   private static BufferedImage mSprites[];
+   
    private final double TERMINAL_VELOCITY = 90; // pixels / second
    
-   private BufferedImage mSprites[];
    private int mCurrentImage;
    private long mLastImageSwitch; // milliseconds
    private long mFrameTime; // milliseconds
@@ -36,7 +37,9 @@ public class Enemy extends Entity {
    }
    
    private void loadSprites() {
-      mSprites = loadSprites(new File("images" + File.separator + "enemy-walk-sheet.png"), SPRITES);
+       if(mSprites == null){
+           mSprites = loadSprites(new File("images" + File.separator + "enemy-walk-sheet.png"), SPRITES);
+       }
       mCurrentImage = 0;
    }
    
@@ -76,6 +79,9 @@ public class Enemy extends Entity {
                 level.deleteEntity(this);
                 break;
             case PLAYER:
+                level.deleteEntity(this);
+                break;
+            case BULLET_EXPLOSION:
                 level.deleteEntity(this);
                 break;
         }

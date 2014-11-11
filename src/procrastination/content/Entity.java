@@ -16,7 +16,7 @@ import javax.imageio.ImageIO;
 public abstract class Entity {
 
     public static enum objectTypes {
-        PLAYER, ENEMY, BULLET
+        PLAYER, ENEMY, BULLET, BULLET_EXPLOSION
     };
     private objectTypes type;
 
@@ -104,6 +104,7 @@ public abstract class Entity {
         bBox.addPoint((int) (mPosition.x - width / 2), (int) (mPosition.y + height / 2));
         bBox.addPoint((int) (mPosition.x + width / 2), (int) (mPosition.y + height / 2));
         bBox.addPoint((int) (mPosition.x + width / 2), (int) (mPosition.y - height / 2));
+        bBox.invalidate();
     }
 
     public Polygon getBBox() {

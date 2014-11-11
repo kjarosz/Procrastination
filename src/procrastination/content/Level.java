@@ -15,11 +15,9 @@ public class Level {
     private Rectangle mLevelSize;
 
     private Player mPlayer;
-    private LinkedList<Enemy> mEnemies;
-    private LinkedList<Bullet> mBullets;
-
+    private LinkedList<Entity> mEntities;
     private LinkedList<Entity> mRemovedEntities;
-    
+
     private BufferedImage mBackground;
 
     private long mEnemySpawnTime; // milliseconds
@@ -34,12 +32,13 @@ public class Level {
         drawWidth = width;
         drawHeight = height;
         loadLevelBackground();
+        mEntities = new LinkedList<>();
+        mRemovedEntities = new LinkedList<>();
         
         mPlayer = new Player(mLevelSize.width, mLevelSize.height);
-        mEnemies = new LinkedList<>();
-        mBullets = new LinkedList<>();
-        mRemovedEntities = new LinkedList<>();
-        mEnemySpawnTime = 700;
+        mEntities.add(mPlayer);
+        
+        mEnemySpawnTime = 100;
         mLastEnemySpawn = System.currentTimeMillis() - mEnemySpawnTime;
     }
     
@@ -73,7 +72,7 @@ public class Level {
 
     public void spawnBullet(Point2D.Double position, Point2D.Double direction) {
         Bullet bullet = new Bullet(position, direction);
-        mBullets.add(bullet);
+        mEntities.add(bullet);
     }
 
     private void spawnNewEnemies() {
@@ -102,38 +101,32 @@ public class Level {
             }
 
             Enemy newEnemy = new Enemy(newEnemyPosition);
-            mEnemies.add(newEnemy);
+            mEntities.add(newEnemy);
         }
     }
 
     public void deleteEntity(Entity entity) {
         mRemovedEntities.add(entity);
     }
+    
+    public void addEntity(Entity entity){
+        mEntities.add(entity);
+    }
 
     public void update() {
         //Update Objects
-        mPlayer.update(this);
+        spawnNewEnemies();  
+        for(int i = 0; i < mEntities.size(); i++){
+            mEntities.get(i).update(this);
+        }
         
-        spawnNewEnemies();
-        for (Enemy enemy : mEnemies) {
-            enemy.update(this);
-        }
-        for (Bullet bullet : mBullets) {
-            bullet.update(this);
-        }
         //Collisions
-        for(Enemy enemy : mEnemies){
-            //Check for collisions with bullets
-            for(Bullet bullet : mBullets){
-                if(bullet.intersectsBBox(enemy.getBBox())){
-                    enemy.collision(bullet.getType(), this);
-                    bullet.collision(enemy.getType(), this);
+        for(int i = 0; i < mEntities.size(); i++){
+            for(int j = i + 1; j < mEntities.size(); j++){
+                if(mEntities.get(i).intersectsBBox(mEntities.get(j).getBBox())){
+                    mEntities.get(i).collision(mEntities.get(j).getType(), this);
+                    mEntities.get(j).collision(mEntities.get(i).getType(), this);
                 }
-            }
-            //Check for collisions with player
-            if(mPlayer.intersectsBBox(enemy.getBBox())){
-                enemy.collision(mPlayer.getType(), this);
-                mPlayer.collision(enemy.getType(), this);
             }
         }
         
@@ -150,11 +143,7 @@ public class Level {
     
     private void removeEntities() {
         for (Entity entity : mRemovedEntities) {
-            if (entity instanceof Bullet) {
-                mBullets.remove(entity);
-            } else if (entity instanceof Enemy) {
-                mEnemies.remove(entity);
-            }
+            mEntities.remove(entity);
         }
         mRemovedEntities.clear();
     }
@@ -164,14 +153,8 @@ public class Level {
             g.drawImage(mBackground, -mapXOffset, -mapYOffset, null);
         }
         
-        mPlayer.draw(g, mapXOffset, mapYOffset);
-
-        for (Enemy enemy : mEnemies) {
-            enemy.draw(g, mapXOffset, mapYOffset);
-        }
-
-        for (Bullet bullet : mBullets) {
-            bullet.draw(g, mapXOffset, mapYOffset);
+        for(Entity e : mEntities){
+            e.draw(g, mapXOffset, mapYOffset);
         }
     }
 
