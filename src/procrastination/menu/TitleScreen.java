@@ -27,5 +27,23 @@ public class TitleScreen extends JPanel {
            }
         });
         add(startButton);
+        
+        JButton highScore = new JButton("High Score");
+        highScore.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                procrastination.viewHighScore();
+            }
+        });
+        add(highScore);
+        
+        JButton quitButton = new JButton("Quit");
+        quitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                procrastination.quit();
+            }
+        });
+        add(quitButton);
     }
 }

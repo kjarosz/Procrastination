@@ -18,7 +18,7 @@ import procrastination.menu.TitleScreen;
 public class Procrastination extends JFrame  {
     private final String TITLE_SCREEN = "Title";
     private final String GAME_SCREEN = "Game";
-    private final String END_SCREEN = "End";
+    private final String HIGH_SCORE_SCREEN = "High Score";
     
     GamePanel mGamePanel;
     
@@ -47,7 +47,7 @@ public class Procrastination extends JFrame  {
         getContentPane().setLayout(new CardLayout());
         addTitleScreen();
         addGamePanel();
-        addEndPanel();
+        addHighScorePanel();
     }
     
     private void addTitleScreen() {
@@ -62,15 +62,8 @@ public class Procrastination extends JFrame  {
         getContentPane().add(mGamePanel, GAME_SCREEN);
     }
     
-    private void addEndPanel() {
+    private void addHighScorePanel() {
         
-    }
-    
-    public void startGame() {
-        Container contentPanel = getContentPane();
-        CardLayout layout = (CardLayout)contentPanel.getLayout();
-        layout.show(contentPanel, GAME_SCREEN);
-        mGamePanel.startGame();
     }
     
     private void setupWindow() {
@@ -104,5 +97,23 @@ public class Procrastination extends JFrame  {
                gamePanel.window_closing();
            }
        });
+    }
+    
+    public void startGame() {
+        Container contentPanel = getContentPane();
+        CardLayout layout = (CardLayout)contentPanel.getLayout();
+        layout.show(contentPanel, GAME_SCREEN);
+        mGamePanel.startGame();
+    }
+    
+    public void viewHighScore() {
+        // TODO End game
+        Container contentPanel = getContentPane();
+        CardLayout layout = (CardLayout)contentPanel.getLayout();
+        layout.show(contentPanel, HIGH_SCORE_SCREEN);
+    }
+    
+    public void quit() {
+        System.exit(0);
     }
 }
