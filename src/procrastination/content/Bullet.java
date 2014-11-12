@@ -23,7 +23,7 @@ public class Bullet extends Entity {
       setPosition(position);
       setDirection(direction);
       setType(objectTypes.BULLET);
-      setBBox(30, 45);
+      setBBox(18, 27);
       
       if(mSprites == null){
         mSprites = loadSprites(new File("images" + File.separator + "shot animation.png"), SPRITES);
@@ -57,8 +57,9 @@ public class Bullet extends Entity {
        
    }
    
+   @Override
    public void draw(Graphics g, int xOffset, int yOffset) {
-      draw(g, 0.25, xOffset, yOffset);
+      draw(g, 0.15, xOffset, yOffset);
       //drawBBox(g, Color.MAGENTA, xOffset, yOffset);
    }
 

@@ -22,18 +22,18 @@ public class Player extends Entity {
         new Rectangle(115, 15, 205, 121),
         new Rectangle(213, 16, 303, 123)
     };
-
+    
     private final int LEFT_KEY = KeyEvent.VK_A;
     private final int RIGHT_KEY = KeyEvent.VK_D;
     private final int UP_KEY = KeyEvent.VK_W;
     private final int DOWN_KEY = KeyEvent.VK_S;
-
+    
     private final double TERMINAL_VELOCITY = 100.0; // pixels per second
     private final Point2D.Double LEFT_VELOCITY = new Point2D.Double(-TERMINAL_VELOCITY, 0.0);
     private final Point2D.Double RIGHT_VELOCITY = new Point2D.Double(TERMINAL_VELOCITY, 0.0);
     private final Point2D.Double DOWN_VELOCITY = new Point2D.Double(0.0, TERMINAL_VELOCITY);
     private final Point2D.Double UP_VELOCITY = new Point2D.Double(0.0, -TERMINAL_VELOCITY);
-
+    
     private BufferedImage mSprites[];
     private int mCurrentImage;
 
@@ -46,6 +46,10 @@ public class Player extends Entity {
     
     private int mapPadding = 55;
     
+    private Point2D.Double bulletPosition = new Point2D.Double(55, 22);
+    double bulletAngle;
+    double bulletDistance;
+    
     public Player(int levelWidth, int levelHeight) {
         setPosition(new Point2D.Double(levelWidth / 2, levelHeight / 2));
         setBBox(90, 98);
@@ -55,6 +59,9 @@ public class Player extends Entity {
         loadSprites();
 
         constructKeyMappings();
+        
+        bulletAngle = Math.atan2(bulletPosition.y, bulletPosition.x);
+        bulletDistance = Math.sqrt(Math.pow(bulletPosition.x, 2) + Math.pow(bulletPosition.y, 2));
     }
 
     private void loadSprites() {
@@ -105,6 +112,7 @@ public class Player extends Entity {
         mVelocity.y -= vel.y;
     }
 
+    @Override
     public void update(Level level) {
         processKeyInputs();
         Rectangle levelSize = level.getLevelSize();
@@ -152,12 +160,19 @@ public class Player extends Entity {
         if (MouseManager.isButtonPressed(MouseEvent.BUTTON1)) {
             if (System.currentTimeMillis() - mLastFiredBullet > mFiringCooldown) {
                 mLastFiredBullet = System.currentTimeMillis();
-
-                level.spawnBullet(mPosition, mDirection);
+                
+                Point2D.Double bulletPos = new Point2D.Double();
+                double angle = Math.atan2(mDirection.y, mDirection.x);
+                
+                bulletPos.x = (int) (mPosition.x + bulletDistance * Math.cos(angle + bulletAngle));
+                bulletPos.y = (int) (mPosition.y + bulletDistance * Math.sin(angle + bulletAngle));
+                
+                level.spawnBullet(bulletPos, mDirection);
             }
         }
     }
     
+    @Override
     public void draw(Graphics g, int xOffset, int yOffset){
         draw(g, 1.0, xOffset, yOffset);
         //drawBBox(g, Color.MAGENTA, xOffset, yOffset);
