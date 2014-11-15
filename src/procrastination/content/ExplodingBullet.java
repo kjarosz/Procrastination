@@ -6,7 +6,7 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
-public class Bullet extends Entity {
+public class ExplodingBullet extends Entity {
    private static final Rectangle SPRITES[] = {
          new Rectangle(0, 0, 120, 180),
          new Rectangle(177, 2, 297, 188)
@@ -19,7 +19,7 @@ public class Bullet extends Entity {
    private long mLastImageSwitch; // milliseconds
    private long mFrameTime; // milliseconds
    
-   public Bullet(Point2D.Double position, Point2D.Double direction) {
+   public ExplodingBullet(Point2D.Double position, Point2D.Double direction) {
       setPosition(position);
       setDirection(direction);
       setType(objectTypes.BULLET);
@@ -67,6 +67,7 @@ public class Bullet extends Entity {
     public void collision(Entity other, Level level) {
         switch (other.getType()){
             case ENEMY:
+                level.addEntity((new BulletExplosion(getPosition())));
                 level.deleteEntity(this);
                 break;
         }

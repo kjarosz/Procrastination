@@ -10,6 +10,7 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.LinkedList;
+import procrastination.content.Powerup.powerups;
 import procrastination.input.ControlFunction;
 import procrastination.input.KeyManager;
 import procrastination.input.KeyMapping;
@@ -34,21 +35,35 @@ public class Player extends Entity {
     private final Point2D.Double DOWN_VELOCITY = new Point2D.Double(0.0, TERMINAL_VELOCITY);
     private final Point2D.Double UP_VELOCITY = new Point2D.Double(0.0, -TERMINAL_VELOCITY);
     
+    private Powerup.powerups currentWeapon = Powerup.powerups.REGULARGUN;
+    private final long mMovementDuration = 5000;
+    private double lastSpeedModifierTime = 0;
+    private double movementMultiplier = 1;
+    
+    private final long mScoreDuration = 2500;
+    private double lastScoreModifierTime = 0;
+    private double scoreMultiplier = 1;
+    
     private BufferedImage mSprites[];
     private int mCurrentImage;
 
     private LinkedList<KeyMapping> mKeyMappings;
 
-    private long mFiringCooldown = 500; // milliseconds
+    private long mStandardFiringCooldown = 500; // milliseconds
+    private long mFastFiringCooldown = 250;
+    private long mFiringCooldown = mStandardFiringCooldown;
+    
     private long mLastFiredBullet; // milliseconds
 
     private Point2D.Double mVelocity;
     
     private int mapPadding = 55;
     
-    private Point2D.Double bulletPosition = new Point2D.Double(55, 22);
-    double bulletAngle;
-    double bulletDistance;
+    //Bullet Correction
+    private final Point2D.Double bulletPosition = new Point2D.Double(55, 22);
+    private double bulletAngle;
+    private double bulletDistance;
+    private double bulletSpread = 45;
     
     public Player(int levelWidth, int levelHeight) {
         setPosition(new Point2D.Double(levelWidth / 2, levelHeight / 2));
@@ -62,6 +77,7 @@ public class Player extends Entity {
         
         bulletAngle = Math.atan2(bulletPosition.y, bulletPosition.x);
         bulletDistance = Math.sqrt(Math.pow(bulletPosition.x, 2) + Math.pow(bulletPosition.y, 2));
+        bulletSpread = Math.toRadians(bulletSpread);
     }
 
     private void loadSprites() {
@@ -117,7 +133,9 @@ public class Player extends Entity {
         processKeyInputs();
         Rectangle levelSize = level.getLevelSize();
         processMouse(level);
-        move(mVelocity);
+        
+        Point2D.Double newVel = new Point2D.Double(mVelocity.x * movementMultiplier, mVelocity.y * movementMultiplier);
+        move(newVel);
         
         level.updateOffset();
         
@@ -131,6 +149,13 @@ public class Player extends Entity {
             mPosition.y = mapPadding;
         }else if(mPosition.y > levelSize.height - mapPadding){
             mPosition.y = levelSize.height - mapPadding;
+        }
+
+        if(lastSpeedModifierTime < System.currentTimeMillis() - mMovementDuration){
+            movementMultiplier = 1;
+        }
+        if(lastScoreModifierTime < System.currentTimeMillis() - mScoreDuration){
+            scoreMultiplier = 1;
         }
     }
     
@@ -158,7 +183,7 @@ public class Player extends Entity {
         setDirection(new Point2D.Double(mousePos.x - mPosition.x + mapOffset.x, mousePos.y - mPosition.y + mapOffset.y));
 
         if (MouseManager.isButtonPressed(MouseEvent.BUTTON1)) {
-            if (System.currentTimeMillis() - mLastFiredBullet > mFiringCooldown) {
+            if (System.currentTimeMillis() - mLastFiredBullet >= mFiringCooldown) {
                 mLastFiredBullet = System.currentTimeMillis();
                 
                 Point2D.Double bulletPos = new Point2D.Double();
@@ -167,7 +192,22 @@ public class Player extends Entity {
                 bulletPos.x = (int) (mPosition.x + bulletDistance * Math.cos(angle + bulletAngle));
                 bulletPos.y = (int) (mPosition.y + bulletDistance * Math.sin(angle + bulletAngle));
                 
-                level.spawnBullet(bulletPos, mDirection);
+                if(currentWeapon == powerups.REGULARGUN){
+                    level.addEntity(new Bullet(bulletPos, mDirection));
+                }else if(currentWeapon == powerups.SCATTERSHOT){
+                    level.addEntity(new Bullet(bulletPos, mDirection));
+                    //Create Angle 1
+                    Point2D.Double bulletDirection = new Point2D.Double();
+                    bulletDirection.x = Math.cos(angle - bulletSpread / 2);
+                    bulletDirection.y = Math.sin(angle - bulletSpread / 2);
+                    level.addEntity(new Bullet(bulletPos, bulletDirection));
+                    //Create Angle 2
+                    bulletDirection.x = Math.cos(angle + bulletSpread / 2);
+                    bulletDirection.y = Math.sin(angle + bulletSpread / 2);
+                    level.addEntity(new Bullet(bulletPos, bulletDirection));
+                }else if(currentWeapon == powerups.EXPLODINGBULLETS){
+                    level.addEntity(new ExplodingBullet(bulletPos, mDirection));
+                }
             }
         }
     }
@@ -175,14 +215,52 @@ public class Player extends Entity {
     @Override
     public void draw(Graphics g, int xOffset, int yOffset){
         draw(g, 1.0, xOffset, yOffset);
+        g.setColor(Color.WHITE);
+        g.drawString("ScoreMultiplier: " + scoreMultiplier + "; MovementMultiplier: " + movementMultiplier, 10, 10);
         //drawBBox(g, Color.MAGENTA, xOffset, yOffset);
     }
 
     @Override
-    public void collision(objectTypes other, Level level) {
-        switch(other){
+    public void collision(Entity other, Level level) {
+        switch(other.getType()){
             case ENEMY:
                 //Ignore for now
+                break;
+            case POWERUP:
+                switch(((Powerup)other).getPowerupType()){
+                    case SPEED:
+                        if(movementMultiplier < 1){
+                            movementMultiplier = 1;
+                        }else{
+                            movementMultiplier = 2;
+                            lastSpeedModifierTime = System.currentTimeMillis();
+                        }
+                        break;
+                    case SLOW:
+                        movementMultiplier = 0.5;
+                        lastSpeedModifierTime = System.currentTimeMillis();
+                        break;
+                    case SCOREMULTIPLIER:
+                        lastScoreModifierTime = System.currentTimeMillis();
+                        scoreMultiplier = 2;
+                        break;
+                    case REGULARGUN:
+                        currentWeapon = powerups.REGULARGUN;
+                        mFiringCooldown = mStandardFiringCooldown;
+                        break;
+                    case RAPIDFIRE:
+                        currentWeapon = powerups.REGULARGUN;
+                        mFiringCooldown = mFastFiringCooldown;
+                        break;
+                    case SCATTERSHOT:
+                        currentWeapon = powerups.SCATTERSHOT;
+                        mFiringCooldown = mStandardFiringCooldown;
+                        break;
+                    case EXPLODINGBULLETS:
+                        currentWeapon = powerups.EXPLODINGBULLETS;
+                        mFiringCooldown = mStandardFiringCooldown;
+                        break;
+                }
                 break;
         }
     }

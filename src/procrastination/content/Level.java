@@ -8,7 +8,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
+import java.util.Random;
 import javax.imageio.ImageIO;
+import procrastination.content.Powerup.powerups;
 
 public class Level {
 
@@ -28,6 +30,8 @@ public class Level {
     private int mapXOffset = 0;
     private int mapYOffset = 0;
     
+    private Random rnd;
+    
     public Level(int width, int height) {
         drawWidth = width;
         drawHeight = height;
@@ -38,8 +42,10 @@ public class Level {
         mPlayer = new Player(mLevelSize.width, mLevelSize.height);
         mEntities.add(mPlayer);
         
-        mEnemySpawnTime = 100;
+        mEnemySpawnTime = 800;
         mLastEnemySpawn = System.currentTimeMillis() - mEnemySpawnTime;
+        
+        rnd = new Random();
     }
     
     private void loadLevelBackground() {
@@ -99,8 +105,8 @@ public class Level {
                     newEnemyPosition.y = mLevelSize.height + 32;
                     break;
             }
-
-            Enemy newEnemy = new Enemy(newEnemyPosition);
+            
+            Enemy newEnemy = new Enemy(newEnemyPosition, powerups.values()[rnd.nextInt(powerups.values().length)]);
             mEntities.add(newEnemy);
         }
     }
@@ -124,8 +130,8 @@ public class Level {
         for(int i = 0; i < mEntities.size(); i++){
             for(int j = i + 1; j < mEntities.size(); j++){
                 if(mEntities.get(i).intersectsBBox(mEntities.get(j).getBBox())){
-                    mEntities.get(i).collision(mEntities.get(j).getType(), this);
-                    mEntities.get(j).collision(mEntities.get(i).getType(), this);
+                    mEntities.get(i).collision(mEntities.get(j), this);
+                    mEntities.get(j).collision(mEntities.get(i), this);
                 }
             }
         }

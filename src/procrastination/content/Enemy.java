@@ -6,6 +6,7 @@ import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import procrastination.content.Powerup.powerups;
 
 public class Enemy extends Entity {
    private static final Rectangle SPRITES[] = {
@@ -24,7 +25,9 @@ public class Enemy extends Entity {
    private long mLastImageSwitch; // milliseconds
    private long mFrameTime; // milliseconds
    
-   public Enemy(Point2D.Double position) {
+   private powerups newSpawn;
+   
+   public Enemy(Point2D.Double position, powerups spawn) {
       setPosition(position);
       setBBox(81, 162);
       setType(objectTypes.ENEMY);
@@ -34,6 +37,8 @@ public class Enemy extends Entity {
       setCurrentImage(mSprites[mCurrentImage]);
       mLastImageSwitch = System.currentTimeMillis();
       mFrameTime = 100;
+      
+      newSpawn = spawn;
    }
    
    private void loadSprites() {
@@ -43,6 +48,7 @@ public class Enemy extends Entity {
       mCurrentImage = 0;
    }
    
+   @Override
    public void update(Level level) {
       Point2D.Double playerPos = level.getPlayer().getPosition();
       Point2D.Double direction = new Point2D.Double();
@@ -67,22 +73,29 @@ public class Enemy extends Entity {
        }
    }
    
+   @Override
    public void draw(Graphics g, int xOffset, int yOffset) {
       draw(g, -0.5, xOffset, yOffset);
       //drawBBox(g, Color.MAGENTA, xOffset, yOffset);
    }
 
     @Override
-    public void collision(objectTypes other, Level level) {
-        switch(other){
+    public void collision(Entity other, Level level) {
+        switch(other.getType()){
             case BULLET:
                 level.deleteEntity(this);
+                if(newSpawn != null){
+                    level.addEntity(new Powerup(newSpawn, mPosition));
+                }
                 break;
             case PLAYER:
                 level.deleteEntity(this);
                 break;
             case BULLET_EXPLOSION:
                 level.deleteEntity(this);
+                if(newSpawn != null){
+                    level.addEntity(new Powerup(newSpawn, mPosition));
+                }
                 break;
         }
     }

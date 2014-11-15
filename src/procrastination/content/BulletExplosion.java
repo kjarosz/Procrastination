@@ -21,6 +21,7 @@ public class BulletExplosion extends Entity {
         timeLiving = 0;
     }
 
+    @Override
     public void update(Level level) {
         double deltaTime = (System.currentTimeMillis() - mTime) / 1000.0;
         timeLiving += deltaTime;
@@ -36,12 +37,13 @@ public class BulletExplosion extends Entity {
         setBBox(2 * radius, 2 * radius);
     }
 
+    @Override
     public void draw(Graphics g, int xOffset, int yOffset) {
         drawBBox(g, Color.MAGENTA, xOffset, yOffset);
     }
 
     @Override
-    public void collision(Entity.objectTypes other, Level level) {
+    public void collision(Entity other, Level level) {
         
     }
 }
