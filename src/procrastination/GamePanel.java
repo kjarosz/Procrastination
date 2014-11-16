@@ -87,10 +87,6 @@ public class GamePanel extends JPanel implements Runnable{
      * @param g The graphics object that will be used for drawing
      */
     private void gameDraw(Graphics g){
-        g.setColor(Color.white);
-        g.drawString("UpdatesPerSecond: " + updatesPerSecond + "; DrawsPerSecond: " + drawsPerSecond, 10, 10);
-        g.setColor(Color.red);
-        g.drawRect(0, 0, gameWindowSize.width - 1, gameWindowSize.height - 1);
         mLevel.draw(g);
     }
     
