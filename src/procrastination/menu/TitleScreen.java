@@ -2,10 +2,14 @@ package procrastination.menu;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -24,14 +28,23 @@ public class TitleScreen extends JPanel {
     private static final String QUIT_BUTTON_IMAGE = "quit.png";
     private static final String QUIT_BUTTON_ROLLOVER = "quit scrollover.png";
     
-    private static final Dimension START_BUTTON_SIZE = new Dimension(100, 40);
-    private static final Dimension HIGH_SCORE_BUTTON_SIZE = new Dimension(160, 40);
-    private static final Dimension QUIT_BUTTON_SIZE = new Dimension(100, 40);
+    private static final Dimension START_BUTTON_SIZE = new Dimension(200, 80);
+    private static final Dimension HIGH_SCORE_BUTTON_SIZE = new Dimension(320, 80);
+    private static final Dimension QUIT_BUTTON_SIZE = new Dimension(200, 80);
+    
+    private BufferedImage mBackground;
     
     public TitleScreen(Procrastination procrastination) {
         setOpaque(false);
         
         createWidgets(procrastination);
+        
+        try {
+            mBackground = ImageIO.read(new File("images" + File.separator + "menu background.png"));
+        } catch(IOException ex) {
+            System.out.println("Could not load menu background.");
+            throw new RuntimeException("Could not load menu background.");
+        }
     }
     
     private void createWidgets(final Procrastination procrastination) {
@@ -83,5 +96,12 @@ public class TitleScreen extends JPanel {
        button.setAlignmentY(JComponent.CENTER_ALIGNMENT);
        button.addActionListener(listener);
        return button;
+    }
+    
+    @Override
+    public void paintComponent(Graphics g) {
+        g.drawImage(mBackground, 0, 0, getWidth(), getHeight(), null);
+        
+        super.paintComponent(g);
     }
 }
