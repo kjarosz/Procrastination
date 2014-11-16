@@ -13,6 +13,7 @@ import javax.swing.SwingUtilities;
 
 import procrastination.input.KeyManager;
 import procrastination.input.MouseManager;
+import procrastination.menu.HighScoreScreen;
 import procrastination.menu.TitleScreen;
 
 public class Procrastination extends JFrame  {
@@ -63,7 +64,8 @@ public class Procrastination extends JFrame  {
     }
     
     private void addHighScorePanel() {
-        
+        HighScoreScreen screen = new HighScoreScreen(this);
+        getContentPane().add(screen, HIGH_SCORE_SCREEN);
     }
     
     private void setupWindow() {
@@ -99,6 +101,12 @@ public class Procrastination extends JFrame  {
        });
     }
     
+    public void showTitle() {
+        Container contentPanel = getContentPane();
+        CardLayout layout = (CardLayout)contentPanel.getLayout();
+        layout.show(contentPanel, TITLE_SCREEN);
+    }
+    
     public void startGame() {
         Container contentPanel = getContentPane();
         CardLayout layout = (CardLayout)contentPanel.getLayout();
@@ -107,7 +115,6 @@ public class Procrastination extends JFrame  {
     }
     
     public void viewHighScore() {
-        // TODO End game
         Container contentPanel = getContentPane();
         CardLayout layout = (CardLayout)contentPanel.getLayout();
         layout.show(contentPanel, HIGH_SCORE_SCREEN);
