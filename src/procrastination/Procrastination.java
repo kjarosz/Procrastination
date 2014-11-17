@@ -26,6 +26,7 @@ public class Procrastination extends JFrame  {
     public static GamePanel mGamePanel;
     public static Procrastination procrastination;
     private static HighScoreScreen hss;
+    private static GameOverScreen mGameOverScreen;
     //The width and height of the draw region in pixels
     private int wPort = 1280;
     private int hPort = 720;

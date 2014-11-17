@@ -67,7 +67,7 @@ public class Player extends Entity {
     private double bulletDistance;
     private double bulletSpread = 45;
 
-    private CustomNumberImage healthDisplay;
+    //private CustomNumberImage healthDisplay;
     private double healthPoints = 50f;
     
     public Player(int levelWidth, int levelHeight) {
@@ -84,7 +84,7 @@ public class Player extends Entity {
         bulletDistance = Math.sqrt(Math.pow(bulletPosition.x, 2) + Math.pow(bulletPosition.y, 2));
         bulletSpread = Math.toRadians(bulletSpread);
         
-        healthDisplay = new CustomNumberImage((int)healthPoints);
+        //healthDisplay = new CustomNumberImage((int)healthPoints);
     }
 
     private void loadSprites() {
@@ -136,7 +136,7 @@ public class Player extends Entity {
     }
     
     public boolean isDead() {
-        return mHealth <= 0;
+        return healthPoints <= 0;
     }
 
     @Override
@@ -226,11 +226,22 @@ public class Player extends Entity {
     @Override
     public void draw(Graphics g, int xOffset, int yOffset){
         draw(g, 1.0, xOffset, yOffset);
-        g.drawImage(mSprites[0], 10, 10, (int)(mSprites[0].getWidth() * 0.5), (int)(mSprites[0].getHeight() * 0.5), null);
-        healthDisplay.draw(g, 20 + (int)(mSprites[0].getWidth() * 0.5), 20);
+        //g.drawImage(mSprites[0], 10, 10, (int)(mSprites[0].getWidth() * 0.5), (int)(mSprites[0].getHeight() * 0.5), null);
+        //healthDisplay.draw(g, 20 + (int)(mSprites[0].getWidth() * 0.5), 20);
         //g.setColor(Color.WHITE);
         //g.drawString("ScoreMultiplier: " + scoreMultiplier + "; MovementMultiplier: " + movementMultiplier, 10, 10);
         //drawBBox(g, Color.MAGENTA, xOffset, yOffset);
+        drawHealthBar(g);
+    }
+    
+    private void drawHealthBar(Graphics g) {
+        g.setColor(Color.RED);
+        g.fillRect(10, 10, 200, 20);
+        g.setColor(Color.GREEN);
+        if(healthPoints < 0)
+            g.fillRect(10, 10, 0, 20);
+        else
+            g.fillRect(10, 10, (int)healthPoints * 4, 20);
     }
 
     @Override
@@ -239,7 +250,7 @@ public class Player extends Entity {
             case ENEMY:
                 //Ignore for now
                 healthPoints -= 5;
-                healthDisplay.assembleNumberImage((int)healthPoints);
+                //healthDisplay.assembleNumberImage((int)healthPoints);
                 break;
             case POWERUP:
                 switch(((Powerup)other).getPowerupType()){

@@ -10,8 +10,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Random;
-
 import javax.imageio.ImageIO;
+import procrastination.GamePanel;
 import procrastination.Procrastination;
 import procrastination.content.Powerup.powerups;
 import procrastination.menu.CustomNumberImage;

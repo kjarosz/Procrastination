@@ -78,7 +78,7 @@ public class GamePanel extends JPanel implements Runnable{
         //Example of keyboard input
         if(KeyManager.isKeyPressed(KeyEvent.VK_ESCAPE)){
             container.showTitle();
-            endGame();
+            endGame(-1);
         }
         
         mLevel.update(this);
@@ -259,7 +259,7 @@ public class GamePanel extends JPanel implements Runnable{
     
     public void gameOver(int score) {
         container.showGameOver(score);
-        endGame();
+        endGame(score);
     }
     
     /**
@@ -267,7 +267,7 @@ public class GamePanel extends JPanel implements Runnable{
      */
     public void endGame(double score){
         running = false;
-        Procrastination.procrastination.viewHighScore();
+        Procrastination.procrastination.showHighScore();
         Procrastination.procrastination.addHighScore((int)score);
         KeyManager.clearKeys();
     }
