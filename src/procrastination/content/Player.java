@@ -64,7 +64,7 @@ public class Player extends Entity {
     private double bulletAngle;
     private double bulletDistance;
     private double bulletSpread = 45;
-    
+
     public Player(int levelWidth, int levelHeight) {
         setPosition(new Point2D.Double(levelWidth / 2, levelHeight / 2));
         setBBox(90, 98);
@@ -215,8 +215,8 @@ public class Player extends Entity {
     @Override
     public void draw(Graphics g, int xOffset, int yOffset){
         draw(g, 1.0, xOffset, yOffset);
-        g.setColor(Color.WHITE);
-        g.drawString("ScoreMultiplier: " + scoreMultiplier + "; MovementMultiplier: " + movementMultiplier, 10, 10);
+        //g.setColor(Color.WHITE);
+        //g.drawString("ScoreMultiplier: " + scoreMultiplier + "; MovementMultiplier: " + movementMultiplier, 10, 10);
         //drawBBox(g, Color.MAGENTA, xOffset, yOffset);
     }
 
@@ -263,5 +263,9 @@ public class Player extends Entity {
                 }
                 break;
         }
+    }
+    
+    public double getScoreMultiplier(){
+        return scoreMultiplier;
     }
 }

@@ -40,7 +40,7 @@ public class CustomNumberImage {
         }
     }
     
-    private void assembleNumberImage(int number) {
+    public void assembleNumberImage(int number) {
         char numberString[] = Integer.toString(number).toCharArray();
         int imageWidth = numberString.length * WIDTH_PER_DIGIT;
         int imageHeight = HEIGHT_PER_DIGIT;

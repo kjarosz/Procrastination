@@ -1,5 +1,6 @@
 package procrastination.content;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -11,6 +12,7 @@ import java.util.LinkedList;
 import java.util.Random;
 import javax.imageio.ImageIO;
 import procrastination.content.Powerup.powerups;
+import procrastination.menu.CustomNumberImage;
 
 public class Level {
 
@@ -32,6 +34,9 @@ public class Level {
     
     private Random rnd;
     
+    private CustomNumberImage score;
+    private double scoreVal = 0;
+    
     public Level(int width, int height) {
         drawWidth = width;
         drawHeight = height;
@@ -46,6 +51,8 @@ public class Level {
         mLastEnemySpawn = System.currentTimeMillis() - mEnemySpawnTime;
         
         rnd = new Random();
+        
+        score = new CustomNumberImage(0);
     }
     
     private void loadLevelBackground() {
@@ -112,6 +119,9 @@ public class Level {
     }
 
     public void deleteEntity(Entity entity) {
+        if(entity.getType() == Entity.objectTypes.ENEMY){
+            incrementScore(10 * mPlayer.getScoreMultiplier());
+        }
         mRemovedEntities.add(entity);
     }
     
@@ -162,6 +172,17 @@ public class Level {
         for(Entity e : mEntities){
             e.draw(g, mapXOffset, mapYOffset);
         }
+        
+        Dimension scoreSize = score.getSize();
+        score.draw(g, drawWidth - scoreSize.width - 10, 10);
+        
+        if(mPlayer.getScoreMultiplier() != 1){
+            g.drawImage(Powerup.mSprites[5], drawWidth - scoreSize.width - 30 - (int)(Powerup.mSprites[5].getWidth() * 0.25), 10, (int)(Powerup.mSprites[5].getWidth() * 0.25), (int)(Powerup.mSprites[5].getHeight() * 0.25), null);
+        }
     }
-
+    
+    public void incrementScore(double ammount){
+        scoreVal += ammount;
+        score.assembleNumberImage((int)scoreVal);
+    }
 }

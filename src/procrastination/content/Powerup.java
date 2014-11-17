@@ -30,7 +30,7 @@ public class Powerup extends Entity {
         new Rectangle(700, 0, 840, 147),
         new Rectangle(840, 0, 980, 147)
     };
-    private static BufferedImage mSprites[];
+    public static BufferedImage mSprites[];
     
     private powerups powerupType;
 
