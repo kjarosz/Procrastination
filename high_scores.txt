@@ -1,10 +1,10 @@
-HighScore:60
-Jake:50
-Mike:30
-Kyle:20
-Your Name Here:0
-Your Name Here:0
-Your Name Here:0
-Your Name Here:0
-Your Name Here:0
-Your Name Here:0
+Jake:45
+:0
+:0
+:0
+:0
+:0
+:0
+:0
+:0
+:0

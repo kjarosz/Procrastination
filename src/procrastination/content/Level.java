@@ -38,6 +38,8 @@ public class Level {
     private CustomNumberImage score;
     private double scoreVal = 0;
     
+    private double powerupChance;
+    
     public Level(int width, int height) {
         drawWidth = width;
         drawHeight = height;
@@ -48,10 +50,11 @@ public class Level {
         mPlayer = new Player(mLevelSize.width, mLevelSize.height);
         mEntities.add(mPlayer);
         
-        mEnemySpawnTime = 800;
+        mEnemySpawnTime = 750;
         mLastEnemySpawn = System.currentTimeMillis() - mEnemySpawnTime;
         
         rnd = new Random();
+        powerupChance = 0.25;
         
         score = new CustomNumberImage(0);
     }
@@ -113,10 +116,9 @@ public class Level {
                     newEnemyPosition.y = mLevelSize.height + 32;
                     break;
             }
-            int newPowerup = rnd.nextInt(powerups.values().length * 2);
             Enemy newEnemy;
-            if(newPowerup < powerups.values().length){
-                newEnemy = new Enemy(newEnemyPosition, powerups.values()[newPowerup]);
+            if(rnd.nextDouble() < powerupChance){
+                newEnemy = new Enemy(newEnemyPosition, powerups.values()[rnd.nextInt(powerups.values().length)]);
             }else{
                 newEnemy = new Enemy(newEnemyPosition, null);
             }
@@ -191,5 +193,9 @@ public class Level {
     public void incrementScore(double ammount){
         scoreVal += ammount * mPlayer.getScoreMultiplier();
         score.assembleNumberImage((int)scoreVal);
+        
+        
+        mEnemySpawnTime = (long) Math.max(200, 750 - (scoreVal / 5.0));
+        powerupChance = Math.min(0.75, 0.5 + (scoreVal / 50.0));
     }
 }

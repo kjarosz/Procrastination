@@ -67,7 +67,7 @@ public class Player extends Entity {
     private double bulletSpread = 45;
 
     private CustomNumberImage healthDisplay;
-    private double healthPoints = 100f;
+    private double healthPoints = 50f;
     
     public Player(int levelWidth, int levelHeight) {
         setPosition(new Point2D.Double(levelWidth / 2, levelHeight / 2));

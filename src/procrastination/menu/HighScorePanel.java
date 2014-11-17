@@ -47,6 +47,18 @@ public class HighScorePanel extends JPanel {
     }
     
     public void reloadHighScores() {
+        if(!(new File("high_scores.text").exists())){
+            try (FileWriter fWriter = new FileWriter("high_scores.txt");
+                BufferedWriter writer = new BufferedWriter(fWriter)) {
+                for (int i = 0; i < mNames.length; i++) {
+                    writer.write(":" + 0);
+                    writer.newLine();
+                }
+            } catch (IOException ex) {
+                System.out.println("High scores could not be written.");
+                throw new RuntimeException("High scores could not be written.");
+            }
+        }
         try (FileReader fReader = new FileReader("high_scores.txt");
                 BufferedReader reader = new BufferedReader(fReader)) {
             for(int i = 0; i < mNames.length; i++) {

@@ -41,6 +41,7 @@ public class Powerup extends Entity {
         if(mSprites == null){
             mSprites = loadSprites(new File("images" + File.separator + "powerupsSpriteSheet.png"), SPRITES);
         }
+        powerupType = newType;
         switch(newType){
             case SPEED:
                 setCurrentImage(mSprites[4]);
@@ -61,14 +62,14 @@ public class Powerup extends Entity {
                 setCurrentImage(mSprites[1]);
                 break;
             case EXPLODINGBULLETS:
-                setCurrentImage(mSprites[2]);
+                setCurrentImage(mSprites[6]);
+                powerupType = powerups.REGULARGUN;
                 break;
         }
         setPosition(position);
         setBBox(56, 58);
         setDirection(new Point2D.Double(0, -1));
         setType(Entity.objectTypes.POWERUP);
-        powerupType = newType;
         startTime = System.currentTimeMillis();
     }
 
@@ -82,7 +83,7 @@ public class Powerup extends Entity {
     @Override
     public void draw(Graphics g, int xOffset, int yOffset) {
         draw(g, 0.4, xOffset, yOffset);
-        drawBBox(g, Color.WHITE, xOffset, yOffset);
+        //drawBBox(g, Color.WHITE, xOffset, yOffset);
     }
     
     @Override
