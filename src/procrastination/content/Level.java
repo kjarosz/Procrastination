@@ -10,7 +10,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Random;
+
 import javax.imageio.ImageIO;
+
+import procrastination.GamePanel;
 import procrastination.content.Powerup.powerups;
 import procrastination.menu.CustomNumberImage;
 
@@ -57,7 +60,7 @@ public class Level {
     
     private void loadLevelBackground() {
         try {
-            mBackground = ImageIO.read(new File("images" + File.separator + "terrain.jpg"));
+            mBackground = ImageIO.read(new File("images" + File.separator + "terrain.png"));
         } catch(IOException ex) {
             System.out.println("Level background failed to load.");
             mBackground = null;
@@ -129,7 +132,7 @@ public class Level {
         mEntities.add(entity);
     }
 
-    public void update() {
+    public void update(GamePanel game) {
         //Update Objects
         spawnNewEnemies();  
         for(int i = 0; i < mEntities.size(); i++){
@@ -149,6 +152,10 @@ public class Level {
         //Remove dead objects
         if (!mRemovedEntities.isEmpty()) {
             removeEntities();
+        }
+        
+        if(mPlayer.isDead()) {
+            game.gameOver((int)scoreVal);
         }
     }
     

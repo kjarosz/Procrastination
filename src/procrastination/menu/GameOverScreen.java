@@ -1,14 +1,20 @@
 package procrastination.menu;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -30,20 +36,35 @@ public class GameOverScreen extends JPanel {
     private JTextField mNameField;
     private JButton mSubmitButton;
     
+    private BufferedImage mBackground;
+    
     public GameOverScreen(Procrastination procrastination) {
         mNames = new String[10];
         mScores = new int[10];
+        
+        try {
+            mBackground = ImageIO.read(new File("images\\high score background.png"));
+        } catch(IOException ex) {
+            
+        }
         
         createWidgets(procrastination);
     }
     
     private void createWidgets(final Procrastination procrastination) {
         setLayout(new BorderLayout());
+        setOpaque(false);
         
         JLabel gameOverLabel = new JLabel("Game Over");
+        gameOverLabel.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+        Font font = gameOverLabel.getFont();
+        Font newFont = new Font(font.getName(), Font.PLAIN, 36);
+        gameOverLabel.setFont(newFont);
+        gameOverLabel.setForeground(Color.BLUE);
         add(gameOverLabel, BorderLayout.NORTH);
         
         JPanel scorePanel = new JPanel();
+        scorePanel.setOpaque(false);
         scorePanel.setLayout(new BoxLayout(scorePanel, BoxLayout.Y_AXIS));
         JLabel scoreLabel = new JLabel();
         scoreLabel.setAlignmentX(JComponent.CENTER_ALIGNMENT);
@@ -59,6 +80,7 @@ public class GameOverScreen extends JPanel {
         add(scorePanel, BorderLayout.CENTER);
         
         JPanel buttonPanel = new JPanel();
+        buttonPanel.setOpaque(false);
         JButton backButton = new JButton("Back");
         backButton.addActionListener(new ActionListener() {
             @Override
@@ -154,5 +176,12 @@ public class GameOverScreen extends JPanel {
                 return i;
         }
         return -1;
+    }
+    
+    @Override
+    public void paintComponent(Graphics g) {
+        g.drawImage(mBackground, 0, 0, getWidth(), getHeight(), null);
+        
+        super.paintComponent(g);
     }
 }

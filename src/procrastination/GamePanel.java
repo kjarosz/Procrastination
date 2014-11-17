@@ -25,7 +25,7 @@ import procrastination.input.KeyManager;
  * @author jradatz
  */
 public class GamePanel extends JPanel implements Runnable{
-    private JFrame container;
+    private Procrastination container;
     
     public Dimension gameWindowSize;    //Pixel size of the buffer
     private Dimension screenSize;       //Size of the actual screen
@@ -57,7 +57,7 @@ public class GamePanel extends JPanel implements Runnable{
      * @param hPort The height of the draw buffer
      * @param owner The JFrame that this panel is contained within
      */
-    public GamePanel(int wPort, int hPort, JFrame owner){
+    public GamePanel(int wPort, int hPort, Procrastination owner){
         gameWindowSize = new Dimension(wPort, hPort);
         container = owner;
         setBackground(Color.BLACK);
@@ -77,10 +77,11 @@ public class GamePanel extends JPanel implements Runnable{
     private void gameUpdate(){
         //Example of keyboard input
         if(KeyManager.isKeyPressed(KeyEvent.VK_ESCAPE)){
+            container.showTitle();
             endGame();
         }
         
-        mLevel.update();
+        mLevel.update(this);
     }
     /**
      * Called by the game loop. This is where all of our draw code will go
@@ -167,7 +168,6 @@ public class GamePanel extends JPanel implements Runnable{
         }
         //Clean up stuffs
         gameEnd();
-        container.dispose();
         System.out.println("System Exiting");
     }
     
@@ -256,6 +256,11 @@ public class GamePanel extends JPanel implements Runnable{
         } catch (Exception e) {
             System.err.println(e);
         }
+    }
+    
+    public void gameOver(int score) {
+        container.showGameOver(score);
+        endGame();
     }
     
     /**

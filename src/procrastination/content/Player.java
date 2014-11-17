@@ -10,6 +10,7 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.LinkedList;
+
 import procrastination.content.Powerup.powerups;
 import procrastination.input.ControlFunction;
 import procrastination.input.KeyManager;
@@ -36,7 +37,7 @@ public class Player extends Entity {
     private final Point2D.Double UP_VELOCITY = new Point2D.Double(0.0, -TERMINAL_VELOCITY);
     
     private Powerup.powerups currentWeapon = Powerup.powerups.REGULARGUN;
-    private final long mMovementDuration = 5000;
+    private final long mMovementDuration = 5000;    
     private double lastSpeedModifierTime = 0;
     private double movementMultiplier = 1;
     
@@ -57,6 +58,8 @@ public class Player extends Entity {
 
     private Point2D.Double mVelocity;
     
+    private int mHealth;
+    
     private int mapPadding = 55;
     
     //Bullet Correction
@@ -70,7 +73,8 @@ public class Player extends Entity {
         setBBox(90, 98);
         setType(objectTypes.PLAYER);
         mVelocity = new Point2D.Double(0.0, 0.0);
-
+        mHealth = 100;
+        
         loadSprites();
 
         constructKeyMappings();
@@ -126,6 +130,10 @@ public class Player extends Entity {
     private void subtractVelocity(Point2D.Double vel) {
         mVelocity.x -= vel.x;
         mVelocity.y -= vel.y;
+    }
+    
+    public boolean isDead() {
+        return mHealth <= 0;
     }
 
     @Override
@@ -215,16 +223,25 @@ public class Player extends Entity {
     @Override
     public void draw(Graphics g, int xOffset, int yOffset){
         draw(g, 1.0, xOffset, yOffset);
-        //g.setColor(Color.WHITE);
-        //g.drawString("ScoreMultiplier: " + scoreMultiplier + "; MovementMultiplier: " + movementMultiplier, 10, 10);
-        //drawBBox(g, Color.MAGENTA, xOffset, yOffset);
+        
+        drawHealthBar(g);
+    }
+    
+    private void drawHealthBar(Graphics g) {
+        g.setColor(Color.RED);
+        g.fillRect(10, 10, 100, 10);
+        g.setColor(Color.GREEN);
+        if(mHealth < 0)
+            g.fillRect(10, 10, 0, 10);
+        else
+            g.fillRect(10, 10, mHealth, 10);
     }
 
     @Override
     public void collision(Entity other, Level level) {
         switch(other.getType()){
             case ENEMY:
-                //Ignore for now
+                mHealth = 0;
                 break;
             case POWERUP:
                 switch(((Powerup)other).getPowerupType()){

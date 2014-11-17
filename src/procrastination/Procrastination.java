@@ -74,8 +74,8 @@ public class Procrastination extends JFrame  {
     }
     
     private void addGameOverPanel() {
-        GameOverScreen screen = new GameOverScreen(this);
-        getContentPane().add(screen, GAME_OVER_SCREEN);
+        mGameOverScreen = new GameOverScreen(this);
+        getContentPane().add(mGameOverScreen, GAME_OVER_SCREEN);
     }
     
     private void setupWindow() {
