@@ -114,7 +114,7 @@ public class Procrastination extends JFrame  {
         mGamePanel.startGame();
     }
     
-    public void viewHighScore() {
+    public void showHighScore() {
         Container contentPanel = getContentPane();
         CardLayout layout = (CardLayout)contentPanel.getLayout();
         layout.show(contentPanel, HIGH_SCORE_SCREEN);
