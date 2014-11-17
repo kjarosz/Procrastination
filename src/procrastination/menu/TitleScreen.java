@@ -71,7 +71,7 @@ public class TitleScreen extends JPanel {
                        new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                procrastination.viewHighScore();
+                procrastination.showHighScore();
             }
         }));
         

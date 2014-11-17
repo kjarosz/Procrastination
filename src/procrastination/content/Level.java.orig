@@ -12,7 +12,12 @@ import java.util.LinkedList;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
+<<<<<<< HEAD
 import procrastination.Procrastination;
+=======
+
+import procrastination.GamePanel;
+>>>>>>> origin/game-over
 import procrastination.content.Powerup.powerups;
 import procrastination.menu.CustomNumberImage;
 
@@ -157,8 +162,13 @@ public class Level {
             removeEntities();
         }
         
+<<<<<<< HEAD
+        if(mPlayer.getHealthPoints() <= 0){
+            Procrastination.mGamePanel.endGame(scoreVal);
+=======
         if(mPlayer.isDead()) {
             game.gameOver((int)scoreVal);
+>>>>>>> origin/game-over
         }
     }
     

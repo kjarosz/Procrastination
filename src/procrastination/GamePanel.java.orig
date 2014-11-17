@@ -77,8 +77,12 @@ public class GamePanel extends JPanel implements Runnable{
     private void gameUpdate(){
         //Example of keyboard input
         if(KeyManager.isKeyPressed(KeyEvent.VK_ESCAPE)){
+<<<<<<< HEAD
+            endGame(0);
+=======
             container.showTitle();
             endGame();
+>>>>>>> origin/game-over
         }
         
         mLevel.update(this);
@@ -168,6 +172,10 @@ public class GamePanel extends JPanel implements Runnable{
         }
         //Clean up stuffs
         gameEnd();
+<<<<<<< HEAD
+=======
+        System.out.println("System Exiting");
+>>>>>>> origin/game-over
     }
     
     /**
