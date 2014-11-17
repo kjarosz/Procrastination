@@ -13,6 +13,7 @@ import javax.swing.SwingUtilities;
 
 import procrastination.input.KeyManager;
 import procrastination.input.MouseManager;
+import procrastination.menu.GameOverScreen;
 import procrastination.menu.HighScoreScreen;
 import procrastination.menu.TitleScreen;
 
@@ -20,8 +21,11 @@ public class Procrastination extends JFrame  {
     private final String TITLE_SCREEN = "Title";
     private final String GAME_SCREEN = "Game";
     private final String HIGH_SCORE_SCREEN = "High Score";
+    private final String GAME_OVER_SCREEN = "Game Over";
     
     GamePanel mGamePanel;
+    
+    private GameOverScreen mGameOverScreen;
     
     //The width and height of the draw region in pixels
     private int wPort = 1280;
@@ -49,6 +53,7 @@ public class Procrastination extends JFrame  {
         addTitleScreen();
         addGamePanel();
         addHighScorePanel();
+        addGameOverPanel();
     }
     
     private void addTitleScreen() {
@@ -68,13 +73,18 @@ public class Procrastination extends JFrame  {
         getContentPane().add(screen, HIGH_SCORE_SCREEN);
     }
     
+    private void addGameOverPanel() {
+        GameOverScreen screen = new GameOverScreen(this);
+        getContentPane().add(screen, GAME_OVER_SCREEN);
+    }
+    
     private void setupWindow() {
         //Changes some JFrsame settings for full screen
         getContentPane().setBackground(Color.black);
         setFocusTraversalKeysEnabled(false);
         setUndecorated(true);
         setResizable(false);
-        //Make the window not go away on close so that we can do gracefull closing
+        //Make the window not go away on close so that we can do graceful closing
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         
         //Gets the GraphicsDevice to set the window as a full screen window
@@ -102,22 +112,27 @@ public class Procrastination extends JFrame  {
     }
     
     public void showTitle() {
-        Container contentPanel = getContentPane();
-        CardLayout layout = (CardLayout)contentPanel.getLayout();
-        layout.show(contentPanel, TITLE_SCREEN);
+        showPanel(TITLE_SCREEN);
     }
     
     public void startGame() {
-        Container contentPanel = getContentPane();
-        CardLayout layout = (CardLayout)contentPanel.getLayout();
-        layout.show(contentPanel, GAME_SCREEN);
+        showPanel(GAME_SCREEN);
         mGamePanel.startGame();
     }
     
     public void showHighScore() {
+        showPanel(HIGH_SCORE_SCREEN);
+    }
+    
+    public void showGameOver(int score) {
+        mGameOverScreen.showScreen(score);
+        showPanel(GAME_OVER_SCREEN);        
+    }
+    
+    private void showPanel(String panel) {
         Container contentPanel = getContentPane();
         CardLayout layout = (CardLayout)contentPanel.getLayout();
-        layout.show(contentPanel, HIGH_SCORE_SCREEN);
+        layout.show(contentPanel, panel);
     }
     
     public void quit() {
