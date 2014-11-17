@@ -77,7 +77,7 @@ public class GamePanel extends JPanel implements Runnable{
     private void gameUpdate(){
         //Example of keyboard input
         if(KeyManager.isKeyPressed(KeyEvent.VK_ESCAPE)){
-            endGame();
+            endGame(0);
         }
         
         mLevel.update();
@@ -167,8 +167,6 @@ public class GamePanel extends JPanel implements Runnable{
         }
         //Clean up stuffs
         gameEnd();
-        container.dispose();
-        System.out.println("System Exiting");
     }
     
     /**
@@ -261,7 +259,10 @@ public class GamePanel extends JPanel implements Runnable{
     /**
      * This function will end the game
      */
-    public void endGame(){
+    public void endGame(double score){
         running = false;
+        Procrastination.procrastination.viewHighScore();
+        Procrastination.procrastination.addHighScore((int)score);
+        KeyManager.clearKeys();
     }
 }

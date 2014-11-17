@@ -9,7 +9,9 @@ import java.io.File;
 import procrastination.content.Powerup.powerups;
 
 public class Enemy extends Entity {
-   private static final Rectangle SPRITES[] = {
+    public static final double points = 1;
+    
+    private static final Rectangle SPRITES[] = {
          new Rectangle(28, 34, 191, 362),
          new Rectangle(213, 12, 377, 362),
          new Rectangle(421, 16, 568, 362),
@@ -84,6 +86,7 @@ public class Enemy extends Entity {
         switch(other.getType()){
             case BULLET:
                 level.deleteEntity(this);
+                level.incrementScore(points);
                 if(newSpawn != null){
                     level.addEntity(new Powerup(newSpawn, mPosition));
                 }
@@ -93,6 +96,7 @@ public class Enemy extends Entity {
                 break;
             case BULLET_EXPLOSION:
                 level.deleteEntity(this);
+                level.incrementScore(points);
                 if(newSpawn != null){
                     level.addEntity(new Powerup(newSpawn, mPosition));
                 }

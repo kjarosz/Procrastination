@@ -15,6 +15,7 @@ import procrastination.input.ControlFunction;
 import procrastination.input.KeyManager;
 import procrastination.input.KeyMapping;
 import procrastination.input.MouseManager;
+import procrastination.menu.CustomNumberImage;
 
 public class Player extends Entity {
 
@@ -65,6 +66,9 @@ public class Player extends Entity {
     private double bulletDistance;
     private double bulletSpread = 45;
 
+    private CustomNumberImage healthDisplay;
+    private double healthPoints = 100f;
+    
     public Player(int levelWidth, int levelHeight) {
         setPosition(new Point2D.Double(levelWidth / 2, levelHeight / 2));
         setBBox(90, 98);
@@ -78,6 +82,8 @@ public class Player extends Entity {
         bulletAngle = Math.atan2(bulletPosition.y, bulletPosition.x);
         bulletDistance = Math.sqrt(Math.pow(bulletPosition.x, 2) + Math.pow(bulletPosition.y, 2));
         bulletSpread = Math.toRadians(bulletSpread);
+        
+        healthDisplay = new CustomNumberImage((int)healthPoints);
     }
 
     private void loadSprites() {
@@ -215,6 +221,8 @@ public class Player extends Entity {
     @Override
     public void draw(Graphics g, int xOffset, int yOffset){
         draw(g, 1.0, xOffset, yOffset);
+        g.drawImage(mSprites[0], 10, 10, (int)(mSprites[0].getWidth() * 0.5), (int)(mSprites[0].getHeight() * 0.5), null);
+        healthDisplay.draw(g, 20 + (int)(mSprites[0].getWidth() * 0.5), 20);
         //g.setColor(Color.WHITE);
         //g.drawString("ScoreMultiplier: " + scoreMultiplier + "; MovementMultiplier: " + movementMultiplier, 10, 10);
         //drawBBox(g, Color.MAGENTA, xOffset, yOffset);
@@ -225,6 +233,8 @@ public class Player extends Entity {
         switch(other.getType()){
             case ENEMY:
                 //Ignore for now
+                healthPoints -= 5;
+                healthDisplay.assembleNumberImage((int)healthPoints);
                 break;
             case POWERUP:
                 switch(((Powerup)other).getPowerupType()){
@@ -263,6 +273,10 @@ public class Player extends Entity {
                 }
                 break;
         }
+    }
+    
+    public double getHealthPoints(){
+        return healthPoints;
     }
     
     public double getScoreMultiplier(){

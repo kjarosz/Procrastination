@@ -69,4 +69,9 @@ public class HighScoreScreen extends JPanel {
         
         super.paintComponent(g);
     }
+    
+    public void addHighScore(int value){
+        mHighScorePanel.addHighScore(value);
+        repaint();
+    }
 }

@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Random;
 import javax.imageio.ImageIO;
+import procrastination.Procrastination;
 import procrastination.content.Powerup.powerups;
 import procrastination.menu.CustomNumberImage;
 
@@ -57,15 +58,15 @@ public class Level {
     
     private void loadLevelBackground() {
         try {
-            mBackground = ImageIO.read(new File("images" + File.separator + "terrain.jpg"));
+            mBackground = ImageIO.read(new File("images" + File.separator + "terrain.png"));
         } catch(IOException ex) {
             System.out.println("Level background failed to load.");
             mBackground = null;
         }
         if(mBackground != null){
-            mLevelSize = new Rectangle(0, 0, mBackground.getWidth(), mBackground.getHeight());
-            mapXOffset = (mBackground.getWidth() - drawWidth) / 2;
-            mapYOffset = (mBackground.getHeight() - drawHeight) / 2;
+            mLevelSize = new Rectangle(0, 0, mBackground.getWidth() * 2, mBackground.getHeight() * 2);
+            mapXOffset = (mBackground.getWidth() * 2 - drawWidth) / 2;
+            mapYOffset = (mBackground.getHeight() * 2 - drawHeight) / 2;
         }else{
             mLevelSize = new Rectangle(0, 0, drawWidth, drawHeight);
         }
@@ -112,16 +113,18 @@ public class Level {
                     newEnemyPosition.y = mLevelSize.height + 32;
                     break;
             }
-            
-            Enemy newEnemy = new Enemy(newEnemyPosition, powerups.values()[rnd.nextInt(powerups.values().length)]);
+            int newPowerup = rnd.nextInt(powerups.values().length * 2);
+            Enemy newEnemy;
+            if(newPowerup < powerups.values().length){
+                newEnemy = new Enemy(newEnemyPosition, powerups.values()[newPowerup]);
+            }else{
+                newEnemy = new Enemy(newEnemyPosition, null);
+            }
             mEntities.add(newEnemy);
         }
     }
 
     public void deleteEntity(Entity entity) {
-        if(entity.getType() == Entity.objectTypes.ENEMY){
-            incrementScore(10 * mPlayer.getScoreMultiplier());
-        }
         mRemovedEntities.add(entity);
     }
     
@@ -150,6 +153,10 @@ public class Level {
         if (!mRemovedEntities.isEmpty()) {
             removeEntities();
         }
+        
+        if(mPlayer.getHealthPoints() <= 0){
+            Procrastination.mGamePanel.endGame(scoreVal);
+        }
     }
     
     public void updateOffset(){
@@ -166,7 +173,7 @@ public class Level {
 
     public void draw(Graphics g) {
         if(mBackground != null) {
-            g.drawImage(mBackground, -mapXOffset, -mapYOffset, null);
+            g.drawImage(mBackground, -mapXOffset, -mapYOffset, mLevelSize.width, mLevelSize.height, null);
         }
         
         for(Entity e : mEntities){
@@ -182,7 +189,7 @@ public class Level {
     }
     
     public void incrementScore(double ammount){
-        scoreVal += ammount;
+        scoreVal += ammount * mPlayer.getScoreMultiplier();
         score.assembleNumberImage((int)scoreVal);
     }
 }
