@@ -59,8 +59,8 @@ public class HighScoreScreen extends JPanel {
         add(backButtonPanel, BorderLayout.SOUTH);
     }
     
-    public void refresh() {
-        mHighScorePanel.reloadHighScores();
+    public void reloadHighScores() {
+       mHighScorePanel.reloadHighScores();
     }
     
     @Override
@@ -68,10 +68,5 @@ public class HighScoreScreen extends JPanel {
         g.drawImage(mBackground, 0, 0, getWidth(), getHeight(), null);
         
         super.paintComponent(g);
-    }
-    
-    public void addHighScore(int value){
-        mHighScorePanel.addHighScore(value);
-        repaint();
     }
 }

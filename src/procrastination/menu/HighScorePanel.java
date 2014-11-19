@@ -8,15 +8,12 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+
 import javax.imageio.ImageIO;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import procrastination.Procrastination;
 
 public class HighScorePanel extends JPanel {
     private final static Point HIGH_SCORE_OFFSET = new Point(150, 163);
@@ -26,7 +23,6 @@ public class HighScorePanel extends JPanel {
     
     private String mNames[];
     private CustomNumberImage mScores[];
-    private int scoreValues[];
     
     private BufferedImage mBackgroundImage;
     
@@ -47,18 +43,6 @@ public class HighScorePanel extends JPanel {
     }
     
     public void reloadHighScores() {
-        if(!(new File("high_scores.text").exists())){
-            try (FileWriter fWriter = new FileWriter("high_scores.txt");
-                BufferedWriter writer = new BufferedWriter(fWriter)) {
-                for (int i = 0; i < mNames.length; i++) {
-                    writer.write(":" + 0);
-                    writer.newLine();
-                }
-            } catch (IOException ex) {
-                System.out.println("High scores could not be written.");
-                throw new RuntimeException("High scores could not be written.");
-            }
-        }
         try (FileReader fReader = new FileReader("high_scores.txt");
                 BufferedReader reader = new BufferedReader(fReader)) {
             for(int i = 0; i < mNames.length; i++) {
@@ -75,41 +59,6 @@ public class HighScorePanel extends JPanel {
         } catch(NumberFormatException ex) {
             System.out.println("One of the high scores contains an invalid number.");
             throw new RuntimeException("High scores sheet contains invalid entries: invalid number.");
-        }
-    }
-    
-    public void addHighScore(int score){
-        for(int i = 0; i < mScores.length; i++){
-            if(score > mScores[i].getValue()){
-                String s = (String) JOptionPane.showInternalInputDialog(Procrastination.procrastination.getContentPane(), "Enter Name");
-
-                if ((s != null) && (s.length() > 0)) {
-                    for (int j = mScores.length - 1; j > i; j--) {
-                        mScores[j].assembleNumberImage(mScores[j - 1].getValue());
-                        mNames[j] = mNames[j - 1];
-                    }
-                    mNames[i] = s;
-                    mScores[i].assembleNumberImage(score);
-                    i = mScores.length;
-                }else{
-                    i = mScores.length;
-                }
-            }
-        }
-        writeHighScores();
-        //repaint();
-    }
-    
-    private void writeHighScores(){
-       try (FileWriter fWriter = new FileWriter("high_scores.txt");
-                BufferedWriter writer = new BufferedWriter(fWriter)) {
-            for(int i = 0; i < mNames.length; i++) {
-                writer.write(mNames[i] + ":" + mScores[i].getValue());
-                writer.newLine();
-            }
-        } catch(IOException ex) {
-            System.out.println("High scores could not be written.");
-            throw new RuntimeException("High scores could not be written.");
         }
     }
     

@@ -14,7 +14,6 @@ import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import procrastination.content.Level;
@@ -41,10 +40,6 @@ public class GamePanel extends JPanel implements Runnable{
     private final double MAX_BEFORE_SYNC = 2 * DESIRED_FRAMERATE;
     private final int MAX_FRAMESKIP = 5;
     private int updateSecondStart; //The start if this second for updates
-    private int updatesPerSecond; //The number of updates for this second
-    private int updateCycles; //The last updates per second that was calculated
-    private int drawsPerSecond; //The number of draws for this second
-    private int drawCycles; //The last calculated draws per second
     
     private Thread gameThread;
     private boolean running = false;
@@ -113,10 +108,6 @@ public class GamePanel extends JPanel implements Runnable{
         //Starts FPS counter
         System.out.println("System Starting");
         updateSecondStart = (int) (System.nanoTime() / 1000000);
-        updateCycles = 0;
-        updatesPerSecond = 0;
-        drawCycles = 0;
-        drawsPerSecond = 0;
         
         gameStart();
         
@@ -128,10 +119,6 @@ public class GamePanel extends JPanel implements Runnable{
             double time = (double) System.nanoTime() / 1000000;
             //Update the updatesPerSecond counters
             if ((time - updateSecondStart) >= 1000) {
-                updatesPerSecond = updateCycles;
-                updateCycles = 0;
-                drawsPerSecond = drawCycles;
-                drawCycles = 0;
                 updateSecondStart = (int)time;
             }
             //If the game loop is significantly behind it stops trying to catch
@@ -142,7 +129,6 @@ public class GamePanel extends JPanel implements Runnable{
             //If it is time to run an update cycle
             if (time >= next_update) {
                 next_update += DESIRED_FRAMERATE;
-                updateCycles++;
                 gameUpdate();
                 //If there is time to update or there has been a
                 //large number of frame skips it renders the screen
@@ -150,7 +136,6 @@ public class GamePanel extends JPanel implements Runnable{
                     gameRender();
                     paintScreen();
                     skipped_frames = 0;
-                    drawCycles++;
                 } else {
                     skipped_frames++;
                 }
@@ -267,8 +252,7 @@ public class GamePanel extends JPanel implements Runnable{
      */
     public void endGame(double score){
         running = false;
-        Procrastination.procrastination.showHighScore();
-        Procrastination.procrastination.addHighScore((int)score);
+        container.showGameOver((int)score);
         KeyManager.clearKeys();
     }
 }

@@ -23,10 +23,9 @@ public class Procrastination extends JFrame  {
     private final String HIGH_SCORE_SCREEN = "High Score";
     private final String GAME_OVER_SCREEN = "Game Over";
     
-    public static GamePanel mGamePanel;
-    public static Procrastination procrastination;
-    private static HighScoreScreen hss;
-    private static GameOverScreen mGameOverScreen;
+    private GamePanel mGamePanel;
+    private HighScoreScreen mHighScoreScreen;
+    private GameOverScreen mGameOverScreen;
     //The width and height of the draw region in pixels
     private int wPort = 1280;
     private int hPort = 720;
@@ -35,7 +34,7 @@ public class Procrastination extends JFrame  {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                procrastination = new Procrastination();
+                new Procrastination();
             }
         });
     }
@@ -69,8 +68,8 @@ public class Procrastination extends JFrame  {
     }
     
     private void addHighScorePanel() {
-        hss = new HighScoreScreen(this);
-        getContentPane().add(hss, HIGH_SCORE_SCREEN);
+        mHighScoreScreen = new HighScoreScreen(this);
+        getContentPane().add(mHighScoreScreen, HIGH_SCORE_SCREEN);
     }
     
     private void addGameOverPanel() {
@@ -121,6 +120,7 @@ public class Procrastination extends JFrame  {
     }
     
     public void showHighScore() {
+        mHighScoreScreen.reloadHighScores();
         showPanel(HIGH_SCORE_SCREEN);
     }
     
@@ -133,10 +133,6 @@ public class Procrastination extends JFrame  {
         Container contentPanel = getContentPane();
         CardLayout layout = (CardLayout)contentPanel.getLayout();
         layout.show(contentPanel, panel);
-    }
-    
-    public void addHighScore(int value){
-        hss.addHighScore(value);
     }
     
     public void quit() {
