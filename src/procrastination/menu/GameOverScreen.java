@@ -45,7 +45,8 @@ public class GameOverScreen extends JPanel {
         try {
             mBackground = ImageIO.read(new File("images\\high score background.png"));
         } catch(IOException ex) {
-            
+            System.out.println("Could not load game over background.");
+            throw new RuntimeException("Could not load game over background.");
         }
         
         createWidgets(procrastination);
