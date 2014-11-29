@@ -31,7 +31,7 @@ public class Player extends Entity {
     private final int UP_KEY = KeyEvent.VK_W;
     private final int DOWN_KEY = KeyEvent.VK_S;
     
-    private final double TERMINAL_VELOCITY = 100.0; // pixels per second
+    private final double TERMINAL_VELOCITY = 200.0; // pixels per second
     private final Point2D.Double LEFT_VELOCITY = new Point2D.Double(-TERMINAL_VELOCITY, 0.0);
     private final Point2D.Double RIGHT_VELOCITY = new Point2D.Double(TERMINAL_VELOCITY, 0.0);
     private final Point2D.Double DOWN_VELOCITY = new Point2D.Double(0.0, TERMINAL_VELOCITY);
@@ -258,7 +258,7 @@ public class Player extends Entity {
                         if(movementMultiplier < 1){
                             movementMultiplier = 1;
                         }else{
-                            movementMultiplier = 2;
+                            movementMultiplier = 1.5;
                             lastSpeedModifierTime = System.currentTimeMillis();
                         }
                         break;

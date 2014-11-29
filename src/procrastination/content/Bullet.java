@@ -13,7 +13,7 @@ public class Bullet extends Entity {
    };
    private static BufferedImage mSprites[];
    
-   private static final double TERMINAL_VELOCITY = 250; // pixels / second
+   private static final double TERMINAL_VELOCITY = 500; // pixels / second
    
    private int mCurrentImage;
    private long mLastImageSwitch; // milliseconds

@@ -21,7 +21,7 @@ public class Enemy extends Entity {
    
    private static BufferedImage mSprites[];
    
-   private final double TERMINAL_VELOCITY = 90; // pixels / second
+   private final double TERMINAL_VELOCITY = 150; // pixels / second
    
    private int mCurrentImage;
    private long mLastImageSwitch; // milliseconds
