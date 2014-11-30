@@ -57,6 +57,10 @@ public class CustomNumberImage {
         g.dispose();
     }
     
+    public BufferedImage getImage() {
+        return mNumber;
+    }
+    
     public Dimension getSize() {
         return new Dimension(mNumber.getWidth(), mNumber.getHeight());
     }
