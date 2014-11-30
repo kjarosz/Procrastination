@@ -17,6 +17,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -33,6 +34,7 @@ public class GameOverScreen extends JPanel {
     private int mNewHighScore;
     private int mNewScoreIndex;
     
+    private JLabel mScoreLabel;
     private JTextField mNameField;
     private JButton mSubmitButton;
     
@@ -56,30 +58,45 @@ public class GameOverScreen extends JPanel {
         setLayout(new BorderLayout());
         setOpaque(false);
         
+        addGameOverTitle();
+        addScorePanel();
+        addButtons(procrastination);
+    }
+    
+    private void addGameOverTitle() {
+        JPanel gameOverPanel = new JPanel();
+        gameOverPanel.setOpaque(false);
+        
         JLabel gameOverLabel = new JLabel("Game Over");
         gameOverLabel.setAlignmentX(JComponent.CENTER_ALIGNMENT);
         Font font = gameOverLabel.getFont();
-        Font newFont = new Font(font.getName(), Font.PLAIN, 36);
+        Font newFont = new Font(font.getName(), Font.PLAIN, 42);
         gameOverLabel.setFont(newFont);
         gameOverLabel.setForeground(Color.BLUE);
-        add(gameOverLabel, BorderLayout.NORTH);
+        gameOverPanel.add(gameOverLabel);
         
+        add(gameOverPanel, BorderLayout.NORTH);
+    }
+    
+    private void addScorePanel() {
         JPanel scorePanel = new JPanel();
         scorePanel.setOpaque(false);
         scorePanel.setLayout(new BoxLayout(scorePanel, BoxLayout.Y_AXIS));
-        JLabel scoreLabel = new JLabel();
-        scoreLabel.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+        mScoreLabel = new JLabel();
+        mScoreLabel.setAlignmentX(JComponent.CENTER_ALIGNMENT);
         mNameField = new JTextField(25);
         mNameField.setAlignmentX(JComponent.CENTER_ALIGNMENT);
         
         scorePanel.add(Box.createVerticalGlue());
-        scorePanel.add(scoreLabel);
+        scorePanel.add(mScoreLabel);
         scorePanel.add(Box.createVerticalStrut(5));
         scorePanel.add(mNameField);
         scorePanel.add(Box.createVerticalGlue());
         
         add(scorePanel, BorderLayout.CENTER);
-        
+    }
+    
+    private void addButtons(final Procrastination procrastination) {
         JPanel buttonPanel = new JPanel();
         buttonPanel.setOpaque(false);
         JButton backButton = new JButton("Back");
@@ -141,6 +158,7 @@ public class GameOverScreen extends JPanel {
     }
     
     public void showScreen(int score) {
+        changeScore(score);
         loadHighScores();
         mNewHighScore = score;
         mNewScoreIndex = newHighScore(mNewHighScore);
@@ -151,6 +169,13 @@ public class GameOverScreen extends JPanel {
             mNameField.setVisible(false);
             mSubmitButton.setVisible(false);
         }
+        revalidate();
+        repaint();
+    }
+    
+    private void changeScore(int score) {
+        CustomNumberImage numberImage = new CustomNumberImage(score);
+        mScoreLabel.setIcon(new ImageIcon(numberImage.getImage()));
     }
     
     private void loadHighScores() {
